@@ -1,0 +1,20 @@
+{
+  "env": {
+    // For test environment only.
+    "test": {
+      "presets": [
+        // Provides support for Vite's import.meta.env.
+        "babel-preset-vite",
+
+        // No need to import 'React' due to JSX transform.
+        ["@babel/preset-react", { "runtime": "automatic" }],
+
+        // Allows processing TypeScript files.
+        "@babel/preset-typescript",
+
+        // Provides support for latest JavaScript features.
+        ["@babel/preset-env", { "targets": { "node": "current" } }]
+      ]
+    }
+  }
+}
