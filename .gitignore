@@ -1,0 +1,32 @@
+# build
+dist
+dist-ssr
+
+# coverage directory used by tools like istanbul
+coverage
+*.lcov
+
+# dependencies
+node_modules
+
+# editor directories and files
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea
+.DS_Store
+*.local
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
