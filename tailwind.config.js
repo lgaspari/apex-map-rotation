@@ -7,6 +7,10 @@ export default {
   ],
   plugins: [],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        apex: '#DA292A',
+      },
+    },
   },
 };
