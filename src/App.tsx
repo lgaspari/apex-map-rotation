@@ -27,15 +27,12 @@ export default function App() {
       {/* Content */}
       <div className="pt-12 flex-grow grid grid-rows-2">
         {Object.values(mapRotationResponse).map(
-          ({ end, map, start, ...response }, index) => (
+          ({ end, map, start }, index) => (
             <MapRotation
               current={index === 0}
               end={end}
               key={`${map}-${start}-${end}`}
               map={map}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore
-              remaining={response.remainingSecs}
               start={start}
             />
           )

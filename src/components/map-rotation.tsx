@@ -1,3 +1,8 @@
+import TimeRemaining from 'components/time-remaining';
+import { format, fromUnix } from 'lib/datetime';
+
+const formatTime = (timestamp: number) => format(fromUnix(timestamp), 'HH:mm');
+
 enum MapImage {
   'Broken Moon' = 'https://apexlegendsstatus.com/assets/maps/Broken_Moon.png',
   'Kings Canyon' = 'https://apexlegendsstatus.com/assets/maps/Kings_Canyon.png',
@@ -10,18 +15,14 @@ interface MapRotationProps {
   current: boolean;
   end: number;
   map: string;
-  remaining?: number;
   start: number;
 }
 
 export default function MapRotation({
   current,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   end,
   map,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   start,
-  remaining,
 }: MapRotationProps) {
   return (
     <div
@@ -48,18 +49,22 @@ export default function MapRotation({
 
           {/* Schedule */}
           <div className="text-gray-300 text-base">
-            From <span className="text-white font-semibold">00:30</span> to{' '}
-            <span className="text-white font-semibold">02:00</span>
+            From{' '}
+            <span className="text-white font-semibold">
+              {formatTime(start)}
+            </span>{' '}
+            to{' '}
+            <span className="text-white font-semibold">{formatTime(end)}</span>
           </div>
         </div>
 
-        {remaining && (
+        {current && (
           <div className="mt-24">
             <div className="text-gray-300 text-center font-semibold whitespace-nowrap uppercase">
               Time remaining
             </div>
             <div className="text-white text-center font-bold text-3xl">
-              00:43:37
+              <TimeRemaining to={end} />
             </div>
           </div>
         )}
