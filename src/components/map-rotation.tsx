@@ -26,12 +26,16 @@ export default function MapRotation({
 }: MapRotationProps) {
   return (
     <div
-      className="bg-cover"
+      className="relative overflow-hidden before:absolute before:top-0 before:right-0 before:bottom-0 before:left-0 before:block before:bg-center before:bg-cover before:hover:scale-125 before:transition-transform before:ease-in-out before:duration-300 before:bg-[image:var(--background-image)]"
       style={{
-        backgroundImage: `url('${MapImage[map as keyof typeof MapImage]}')`,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        '--background-image': `url('${
+          MapImage[map as keyof typeof MapImage]
+        }')`,
       }}
     >
-      <div className="p-8 h-[100%] w-[100%] flex flex-col items-start sm:items-center justify-start sm:justify-center backdrop-blur-[2px]">
+      <div className="p-8 h-[100%] w-[100%] flex flex-col items-start sm:items-center justify-start sm:justify-center backdrop-blur-[2px] hover:backdrop-blur-[1px] transition-[backdrop-filter] ease-in-out duration-300">
         <div className="flex flex-col gap-2">
           {/* Badge */}
           <span
