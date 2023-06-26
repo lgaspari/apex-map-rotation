@@ -1,6 +1,6 @@
 import { getDate, getDiff, getDuration, humanizeDuration } from 'lib/datetime';
 import { sendNotification } from 'lib/notifications';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 interface UseScheduledMapNotificationProps {
   /**
@@ -31,6 +31,8 @@ export default function useScheduledMapNotification({
   threshold = 15,
   when,
 }: UseScheduledMapNotificationProps): UseScheduledMapNotificationReturn {
+  const [sent, setSent] = useState(false);
+
   useEffect(() => {
     const notificationDelay = getDiff(
       // now
@@ -48,17 +50,21 @@ export default function useScheduledMapNotification({
      */
     const timeout = setTimeout(
       () => {
-        const timeRemaining = getDuration(
-          getDiff(getDate(), getDate(when), 'milliseconds')
-        );
+        if (!sent) {
+          const timeRemaining = getDuration(
+            getDiff(getDate(), getDate(when), 'milliseconds')
+          );
 
-        sendNotification({
-          title: `${map} coming up in ${humanizeDuration(timeRemaining)}`,
-        });
+          sendNotification({
+            title: `${map} coming up in ${humanizeDuration(timeRemaining)}`,
+          });
+
+          setSent(true);
+        }
       },
       notificationDelay > 0 ? notificationDelay : 0
     );
 
     () => clearTimeout(timeout);
-  }, [map, threshold, when]);
+  }, [map, sent, threshold, when]);
 }
