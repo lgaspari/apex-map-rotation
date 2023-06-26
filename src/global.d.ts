@@ -1,3 +1,5 @@
+type DateObject = Dayjs;
+
 interface ImportMetaEnv {
   VITE_APEX_LEGENDS_API: string;
   VITE_APEX_LEGENDS_API_SECRET_TOKEN: string;
