@@ -20,12 +20,6 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
          * Default fetcher using Axios.
          */
         fetcher: (url: string) => api.get(url).then((res) => res.data),
-
-        /**
-         * Revalidation on focus is quite annoying, we should revalidate when
-         * stale only.
-         */
-        revalidateOnFocus: false,
       }}
     >
       <App />

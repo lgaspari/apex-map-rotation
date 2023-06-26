@@ -1,3 +1,4 @@
+import Spinner from 'components/spinner';
 import TimeRemaining from 'components/time-remaining';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
 import { format, getDate, getDateFromUnix, getDiff } from 'lib/datetime';
@@ -26,14 +27,9 @@ export default function MapRotationPage() {
 
   return (
     <div className="min-h-screen pt-12 flex flex-col">
-      {isLoading || isValidating ? (
+      {isLoading ? (
         <div className="flex-grow flex items-center justify-center">
-          <div
-            className="h-12 w-12 animate-spin rounded-full border-4 border-solid border-apex border-r-transparent"
-            role="status"
-          >
-            <span className="sr-only">Loading...</span>
-          </div>
+          <Spinner />
         </div>
       ) : error ? (
         <div className="flex-grow flex flex-col items-center justify-center gap-4">
@@ -42,14 +38,22 @@ export default function MapRotationPage() {
           </div>
           <button
             className="px-4 py-2 rounded-md text-white text-xs uppercase bg-apex shadow-sm hover:shadow-sm active:shadow-md shadow-gray-800 hover:shadow-gray-800 active:shadow-gray-800"
-            onClick={() => mutate()}
+            onClick={() => mutate(undefined)}
           >
             Retry
           </button>
         </div>
       ) : (
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        <MapRotationView current={data!.current} next={data!.next} />
+        <div className="relative flex-grow flex flex-col">
+          {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
+          <MapRotationView current={data!.current} next={data!.next} />
+
+          {isValidating && (
+            <div className="absolute top-0 right-0 p-2">
+              <Spinner size="small" />
+            </div>
+          )}
+        </div>
       )}
     </div>
   );
