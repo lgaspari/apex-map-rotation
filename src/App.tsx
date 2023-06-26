@@ -1,6 +1,9 @@
+import usePromptNotificationPermission from 'hooks/use-prompt-notification-permission';
 import MapRotationPage from 'pages/map-rotation';
 
 export default function App() {
+  usePromptNotificationPermission();
+
   return (
     <div>
       {/* Header */}

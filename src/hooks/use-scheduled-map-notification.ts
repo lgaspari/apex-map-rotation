@@ -1,4 +1,5 @@
 import { getDate, getDiff, getDuration, humanizeDuration } from 'lib/datetime';
+import { sendNotification } from 'lib/notifications';
 import { useEffect } from 'react';
 
 interface UseScheduledMapNotificationProps {
@@ -51,12 +52,9 @@ export default function useScheduledMapNotification({
           getDiff(getDate(), getDate(when), 'milliseconds')
         );
 
-        new Notification(
-          `${map} coming up in ${humanizeDuration(timeRemaining)}`,
-          {
-            body: 'Apex Legends - Map Rotation',
-          }
-        );
+        sendNotification({
+          title: `${map} coming up in ${humanizeDuration(timeRemaining)}`,
+        });
       },
       notificationDelay > 0 ? notificationDelay : 0
     );
