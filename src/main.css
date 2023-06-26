@@ -1,6 +1,13 @@
 @tailwind base;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Duke_Fill';
+  src: url('fonts/duke-fill.otf') format('opentype'),
+    url('fonts/duke-fill.woff') format('woff');
+}
+
+
 @layer base {
   * {
     @apply focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-apex;

@@ -17,7 +17,7 @@ export default function App() {
           />
         </div>
 
-        <div className="text-white text-lg font-bold uppercase">
+        <div className="text-white text-4xl tracking-wide font-duke-fill uppercase">
           Map Rotation
         </div>
 

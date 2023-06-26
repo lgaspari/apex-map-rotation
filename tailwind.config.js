@@ -1,16 +1,18 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   // eslint-disable-next-line prettier/prettier
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx}',
-  ],
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   plugins: [],
   theme: {
     extend: {
       colors: {
         apex: '#DA292A',
       },
+    },
+    fontFamily: {
+      'duke-fill': ['Duke_Fill', ...defaultTheme.fontFamily.sans],
     },
   },
 };
