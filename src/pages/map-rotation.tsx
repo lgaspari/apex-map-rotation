@@ -1,6 +1,6 @@
 import TimeRemaining from 'components/time-remaining';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
-import { format, getDateFromUnix } from 'lib/datetime';
+import { format, getDate, getDateFromUnix, getDiff } from 'lib/datetime';
 import useSWR from 'swr';
 import MapRotationType from 'types/map-rotation';
 
@@ -18,7 +18,11 @@ const formatMapSchedule = (unix: number) =>
 export default function MapRotationPage() {
   const { data, error, isLoading, isValidating, mutate } = useSWR<
     Record<string, MapRotationType>
-  >(import.meta.env.VITE_APEX_LEGENDS_MAP_ROTATION_ENDPOINT);
+  >(import.meta.env.VITE_APEX_LEGENDS_MAP_ROTATION_ENDPOINT, {
+    refreshInterval: (data) =>
+      data ? getDiff(getDate(), data.current.end) : 0,
+    refreshWhenHidden: true,
+  });
 
   return (
     <div className="min-h-screen pt-12 flex flex-col">
