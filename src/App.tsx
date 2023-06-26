@@ -12,7 +12,7 @@ export default function App() {
           <img
             alt="Apex Legends Logo"
             height={32}
-            src="https://media.contentapi.ea.com/content/dam/apex-legends/common/logos/apex-white-nav-logo.svg"
+            src={import.meta.env.VITE_APEX_LEGENDS_LOGO_URL}
             width={48}
           />
         </div>
