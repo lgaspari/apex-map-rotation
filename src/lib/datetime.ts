@@ -1,4 +1,4 @@
-import dayjs, { type ConfigType, type Dayjs, type UnitType } from 'dayjs';
+import dayjs, { type ConfigType, type Dayjs } from 'dayjs';
 import duration, { type Duration } from 'dayjs/plugin/duration';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -27,8 +27,8 @@ export function getDateFromUnix(unix: number) {
   return dayjs.unix(unix);
 }
 
-export function getDiff(from: ConfigType, to: ConfigType, unit?: UnitType) {
-  return getDate(to).diff(getDate(from), unit);
+export function getDiff(from: ConfigType, to: ConfigType) {
+  return getDate(to).diff(getDate(from));
 }
 
 export function getDuration(time: number) {

@@ -1,35 +1,31 @@
+import { MapName } from 'constants/map';
 import { getDate, getDiff, getDuration, humanizeDuration } from 'lib/datetime';
 import { sendNotification } from 'lib/notifications';
 import { useEffect, useState } from 'react';
+import type MapType from 'types/map';
 
 interface UseScheduledMapNotificationProps {
   /**
-   * Map name.
+   * Map information used for the notification.
    */
-  map: string;
+  map: MapType;
 
   /**
-   * Notification threshold in minutes.
+   * Notification threshold (minutes).
    *
    * If `threshold` is equal to `30`, then notifications will be sent 30
-   * minutes before the `timestamp`.
+   * minutes before `start` time.
    *
    * @default 15 // minutes
    */
   threshold?: number;
-
-  /**
-   * Notification timestamp.
-   */
-  when: DateObject;
 }
 
 type UseScheduledMapNotificationReturn = void;
 
 export default function useScheduledMapNotification({
-  map,
+  map: { code, start },
   threshold = 15,
-  when,
 }: UseScheduledMapNotificationProps): UseScheduledMapNotificationReturn {
   const [sent, setSent] = useState(false);
 
@@ -37,26 +33,27 @@ export default function useScheduledMapNotification({
     const notificationDelay = getDiff(
       // now
       getDate(),
-      // timestamp minus the notification threshold
-      getDate(when).subtract(threshold, 'minutes'),
-      // unit
-      'milliseconds'
+      // start minus the notification threshold
+      getDate(start).subtract(threshold, 'minutes')
     );
 
     /**
-     * The notification is sent regardless of exceeding the schedule time. In
-     * that case, the `delay` will be negative so it's capped to `0` to prevent
-     * issues calling the `setTimeout` callback.
+     * The notification is sent regardless of exceeding the `start` time. In
+     * that case, the `notificationDelay` will be a negative value, so it's
+     * capped to zero (`0`) to prevent issues when calling the `setTimeout`
+     * callback in older browsers.
+     *
+     * @note The notification will be sent only once.
      */
     const timeout = setTimeout(
       () => {
         if (!sent) {
-          const timeRemaining = getDuration(
-            getDiff(getDate(), getDate(when), 'milliseconds')
-          );
+          const timeRemaining = getDuration(getDiff(getDate(), getDate(start)));
 
           sendNotification({
-            title: `${map} coming up in ${humanizeDuration(timeRemaining)}`,
+            title: `${MapName[code]} coming up in ${humanizeDuration(
+              timeRemaining
+            )}`,
           });
 
           setSent(true);
@@ -66,5 +63,5 @@ export default function useScheduledMapNotification({
     );
 
     () => clearTimeout(timeout);
-  }, [map, sent, threshold, when]);
+  }, [code, sent, threshold, start]);
 }

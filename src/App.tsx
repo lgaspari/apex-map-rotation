@@ -27,9 +27,7 @@ export default function App() {
       </div>
 
       {/* Content */}
-      <div>
-        <MapRotationPage />
-      </div>
+      <MapRotationPage />
     </div>
   );
 }
