@@ -3,7 +3,7 @@ import { MapImage, MapName } from 'constants/map';
 import { format } from 'lib/datetime';
 import type MapType from 'types/map';
 
-interface MapProps {
+export interface MapProps {
   current?: boolean;
   map: MapType;
 }
@@ -42,7 +42,7 @@ export default function Map({
           </div>
 
           {/* Schedule */}
-          <div className="text-gray-300 text-base">
+          <div className="text-gray-300 text-base" data-testid="map-schedule">
             From{' '}
             <span className="text-white font-semibold">
               {formatMapSchedule(start)}
