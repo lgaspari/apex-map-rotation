@@ -1,4 +1,4 @@
-interface SpinnerProps {
+export interface SpinnerProps {
   size?: 'large' | 'small';
 }
 
