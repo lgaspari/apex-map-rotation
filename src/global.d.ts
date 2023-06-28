@@ -1,5 +1,15 @@
 type DateObject = import('dayjs').Dayjs;
 
+/**
+ * Date time standard format.
+ */
+type ISOString = string;
+
+/**
+ * Units of time.
+ */
+type Milliseconds = number;
+
 interface ImportMetaEnv {
   VITE_APEX_LEGENDS_API: string;
   VITE_APEX_LEGENDS_API_SECRET_TOKEN: string;

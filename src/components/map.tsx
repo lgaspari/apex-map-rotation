@@ -60,7 +60,7 @@ export default function Map({
               Time remaining
             </div>
             <div className="text-white text-center font-bold text-3xl">
-              <TimeRemaining to={end} />
+              <TimeRemaining to={end.valueOf()} />
             </div>
           </div>
         )}

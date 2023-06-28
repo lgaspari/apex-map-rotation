@@ -2,7 +2,7 @@ import { format, getDiffToNow, getDuration } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 
 interface TimeRemainingProps {
-  to: DateObject;
+  to: Milliseconds;
 }
 
 export default function TimeRemaining({ to }: TimeRemainingProps) {
@@ -24,5 +24,7 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
     return () => clearInterval(interval);
   }, [to]);
 
-  return <div>{format(getDuration(getDiffToNow(to)), 'HH:mm:ss')}</div>;
+  return (
+    <div role="timer">{format(getDuration(getDiffToNow(to)), 'HH:mm:ss')}</div>
+  );
 }
