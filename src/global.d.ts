@@ -1,4 +1,4 @@
-type DateObject = Dayjs;
+type DateObject = import('dayjs').Dayjs;
 
 interface ImportMetaEnv {
   VITE_APEX_LEGENDS_API: string;

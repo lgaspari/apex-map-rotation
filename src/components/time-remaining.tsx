@@ -8,6 +8,9 @@ interface TimeRemainingProps {
 export default function TimeRemaining({ to }: TimeRemainingProps) {
   const [now, setNow] = useState(Date.now());
 
+  /**
+   * Re-render component every one second after render.
+   */
   useEffect(() => {
     const interval = setInterval(() => {
       const timestamp = Date.now();
@@ -21,7 +24,7 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [to]);
 
   return <div>{format(getDuration(getDiff(now, to)), 'HH:mm:ss')}</div>;
 }

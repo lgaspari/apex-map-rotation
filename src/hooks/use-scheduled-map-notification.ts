@@ -1,7 +1,7 @@
 import { MapName } from 'constants/map';
 import { getDate, getDiff, getDuration, humanizeDuration } from 'lib/datetime';
 import { sendNotification } from 'lib/notifications';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type MapType from 'types/map';
 
 interface UseScheduledMapNotificationProps {
@@ -29,6 +29,23 @@ export default function useScheduledMapNotification({
 }: UseScheduledMapNotificationProps): UseScheduledMapNotificationReturn {
   const [sent, setSent] = useState(false);
 
+  /**
+   * Memoize timestamp to prevent `sent` state reset from happening more than once.
+   *
+   * @todo revisit, it might be better to memoize map rotation data altogether.
+   */
+  const startTimestamp = useMemo(() => start.valueOf(), [start]);
+
+  /**
+   * Reset `sent` state whenever map information changes.
+   */
+  useEffect(() => {
+    setSent(false);
+  }, [code, startTimestamp]);
+
+  /**
+   * Schedule map notification.
+   */
   useEffect(() => {
     const notificationDelay = getDiff(
       // now
@@ -43,7 +60,7 @@ export default function useScheduledMapNotification({
      * capped to zero (`0`) to prevent issues when calling the `setTimeout`
      * callback in older browsers.
      *
-     * @note The notification will be sent only once.
+     * @note The notification will be sent only once per map and start time.
      */
     const timeout = setTimeout(
       () => {
