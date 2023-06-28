@@ -27,8 +27,8 @@ export function getDateFromUnix(unix: number) {
   return dayjs.unix(unix);
 }
 
-export function getDiff(from: ConfigType, to: ConfigType) {
-  return getDate(to).diff(getDate(from));
+export function getDiffToNow(to: ConfigType) {
+  return getDate(to).diff();
 }
 
 export function getDuration(time: number) {

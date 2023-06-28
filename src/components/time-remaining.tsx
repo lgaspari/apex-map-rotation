@@ -1,4 +1,4 @@
-import { format, getDiff, getDuration } from 'lib/datetime';
+import { format, getDiffToNow, getDuration } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 
 interface TimeRemainingProps {
@@ -6,25 +6,23 @@ interface TimeRemainingProps {
 }
 
 export default function TimeRemaining({ to }: TimeRemainingProps) {
-  const [now, setNow] = useState(Date.now());
+  const [, setNow] = useState(Date.now());
 
   /**
    * Re-render component every one second after render.
    */
   useEffect(() => {
     const interval = setInterval(() => {
-      const timestamp = Date.now();
-
       // zero is still a valid value
-      if (getDiff(timestamp, to) < 0) {
+      if (getDiffToNow(to) < 0) {
         clearInterval(interval);
       } else {
-        setNow(timestamp);
+        setNow(Date.now());
       }
     }, 1000);
 
     return () => clearInterval(interval);
   }, [to]);
 
-  return <div>{format(getDuration(getDiff(now, to)), 'HH:mm:ss')}</div>;
+  return <div>{format(getDuration(getDiffToNow(to)), 'HH:mm:ss')}</div>;
 }

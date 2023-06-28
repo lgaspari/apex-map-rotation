@@ -1,8 +1,15 @@
 import { MapName } from 'constants/map';
-import { getDate, getDiff, getDuration, humanizeDuration } from 'lib/datetime';
+import { getDiffToNow, getDuration, humanizeDuration } from 'lib/datetime';
 import { sendNotification } from 'lib/notifications';
 import { useEffect, useMemo, useState } from 'react';
 import type MapType from 'types/map';
+
+/**
+ * Using a constant until we've setup user preferences.
+ *
+ * @todo replace with user preferences.
+ */
+const NOTIFICATION_THRESHOLD = 15;
 
 interface UseScheduledMapNotificationProps {
   /**
@@ -25,7 +32,7 @@ type UseScheduledMapNotificationReturn = void;
 
 export default function useScheduledMapNotification({
   map: { code, start },
-  threshold = 15,
+  threshold = NOTIFICATION_THRESHOLD,
 }: UseScheduledMapNotificationProps): UseScheduledMapNotificationReturn {
   const [sent, setSent] = useState(false);
 
@@ -47,11 +54,8 @@ export default function useScheduledMapNotification({
    * Schedule map notification.
    */
   useEffect(() => {
-    const notificationDelay = getDiff(
-      // now
-      getDate(),
-      // start minus the notification threshold
-      getDate(start).subtract(threshold, 'minutes')
+    const notificationDelay = getDiffToNow(
+      start.subtract(threshold, 'minutes')
     );
 
     /**
@@ -65,14 +69,11 @@ export default function useScheduledMapNotification({
     const timeout = setTimeout(
       () => {
         if (!sent) {
-          const timeRemaining = getDuration(getDiff(getDate(), getDate(start)));
-
           sendNotification({
             title: `${MapName[code]} coming up in ${humanizeDuration(
-              timeRemaining
+              getDuration(getDiffToNow(start))
             )}`,
           });
-
           setSent(true);
         }
       },

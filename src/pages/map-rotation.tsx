@@ -2,7 +2,7 @@ import Map from 'components/map';
 import Spinner from 'components/spinner';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
 import { getMapRotation } from 'lib/api';
-import { getDate, getDiff } from 'lib/datetime';
+import { getDiffToNow } from 'lib/datetime';
 import useSWR from 'swr';
 import type MapType from 'types/map';
 
@@ -25,8 +25,7 @@ export default function MapRotationPage() {
     /**
      * Refresh when the current map finishes.
      */
-    refreshInterval: (data) =>
-      data ? getDiff(getDate(), data.current.end) : 0,
+    refreshInterval: (data) => (data ? getDiffToNow(data.current.end) : 0),
 
     /**
      * Enable refresh when window is not visible.
@@ -40,7 +39,7 @@ export default function MapRotationPage() {
         <div className="flex-grow flex items-center justify-center">
           <Spinner />
         </div>
-      ) : error ? (
+      ) : !data || error ? (
         <div className="flex-grow flex flex-col items-center justify-center gap-4">
           <div className="text-black text-base font-light">
             An unexpected error occurred while loading the map rotation
@@ -54,8 +53,7 @@ export default function MapRotationPage() {
         </div>
       ) : (
         <div className="relative flex-grow flex flex-col">
-          {/* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */}
-          <MapRotationView current={data!.current} next={data!.next} />
+          <MapRotationView current={data.current} next={data.next} />
 
           {isValidating && (
             <div className="absolute top-0 right-0 p-2">
