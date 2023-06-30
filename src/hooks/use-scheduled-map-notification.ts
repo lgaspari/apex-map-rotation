@@ -37,7 +37,8 @@ export default function useScheduledMapNotification({
   const [sent, setSent] = useState(false);
 
   /**
-   * Memoize timestamp to prevent `sent` state reset from happening more than once.
+   * Memoize timestamp to prevent `sent` state reset from occurring more than
+   * once.
    *
    * @todo revisit, it might be better to memoize map rotation data altogether.
    */
@@ -51,7 +52,14 @@ export default function useScheduledMapNotification({
   }, [code, startTimestamp]);
 
   /**
-   * Schedule map notification.
+   * Schedule map notification by calculating how many milliseconds are between
+   * the current time and the beginning of the next map minus the threshold (in
+   * minutes).
+   *
+   * @note there's another approach that can be explored that checks every
+   * second whether the notification should be sent, similar to the time
+   * remaining component but it may not meet the expectations as it won't run
+   * in a web worker.
    */
   useEffect(() => {
     const notificationDelay = getDiffToNow(
@@ -59,24 +67,41 @@ export default function useScheduledMapNotification({
     );
 
     /**
-     * The notification is sent regardless of exceeding the `start` time. In
-     * that case, the `notificationDelay` will be a negative value, so it's
-     * capped to zero (`0`) to prevent issues when calling the `setTimeout`
-     * callback in older browsers.
+     * Apparently, `setTimeout()` is not reliable when running in background or
+     * inactive tabs.
      *
-     * @note The notification will be sent only once per map and start time.
+     * @see https://developer.mozilla.org/en-US/docs/Web/API/setTimeout#timeouts_in_inactive_tabs
+     * @see https://stackoverflow.com/questions/6032429/chrome-timeouts-interval-suspended-in-background-tabs
+     * @see https://isamatov.com/prevent-timers-stopping-javascript/
+     *
+     * @todo use Web Workers instead.
      */
     const timeout = setTimeout(
       () => {
-        if (!sent) {
+        const timeRemaining = getDiffToNow(start);
+
+        /**
+         * The notification shall be sent only once per map code and start
+         * time and it won't be sent if the map has already started.
+         *
+         * The latter condition is related to the `setTimeout()`, which is
+         * "slowed down" when the tab is inactive or in background.
+         */
+        if (!sent && timeRemaining >= 0) {
           sendNotification({
             title: `${MapName[code]} coming up in ${humanizeDuration(
-              getDuration(getDiffToNow(start))
+              getDuration(timeRemaining)
             )}`,
           });
           setSent(true);
         }
       },
+      /**
+       * If the current time has exceeded the threshold, then the difference
+       * will result in a negative value. To prevent possible issues when
+       * calling the `setTimeout()` callback in older browsers, we're capping
+       * this value to `0`.
+       */
       notificationDelay > 0 ? notificationDelay : 0
     );
 
