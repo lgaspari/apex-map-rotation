@@ -1,7 +1,25 @@
+import SettingsModal from 'components/settings-modal';
+import { MapCode } from 'constants/map';
+import useLocalStorage from 'hooks/use-local-storage';
 import usePromptNotificationPermission from 'hooks/use-prompt-notification-permission';
+import { SettingsIcon } from 'icons';
 import MapRotationPage from 'pages/map-rotation';
+import { useState } from 'react';
+import type Settings from 'types/settings';
 
 export default function App() {
+  const [openedSettingsModal, setOpenedSettingsModal] = useState(false);
+
+  const [settings, setSettings] = useLocalStorage<Settings>(
+    'apex-legends-settings',
+    {
+      notifications: {
+        maps: Object.values(MapCode),
+        threshold: 15,
+      },
+    }
+  );
+
   usePromptNotificationPermission();
 
   return (
@@ -22,12 +40,25 @@ export default function App() {
         </div>
 
         <div className="w-16 flex items-center justify-end">
-          <button className="text-white text-xs uppercase">Settings</button>
+          <button
+            className="rounded-sm text-white"
+            onClick={() => setOpenedSettingsModal(true)}
+          >
+            <SettingsIcon />
+          </button>
         </div>
       </div>
 
       {/* Content */}
-      <MapRotationPage />
+      <MapRotationPage settings={settings} />
+
+      {/* Settings */}
+      <SettingsModal
+        onClose={() => setOpenedSettingsModal(false)}
+        opened={openedSettingsModal}
+        setSettings={setSettings}
+        settings={settings}
+      />
     </div>
   );
 }

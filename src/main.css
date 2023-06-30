@@ -3,6 +3,6 @@
 
 @layer base {
   * {
-    @apply focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-apex;
+    @apply focus:outline focus:outline-2 focus:outline-offset-1 focus:outline-white;
   }
 }

@@ -5,8 +5,13 @@ import { getMapRotation } from 'lib/api';
 import { getDiffToNow } from 'lib/datetime';
 import useSWR from 'swr';
 import type MapType from 'types/map';
+import type Settings from 'types/settings';
 
-export default function MapRotationPage() {
+interface MapRotationPageProps {
+  settings: Settings;
+}
+
+export default function MapRotationPage({ settings }: MapRotationPageProps) {
   const { data, error, isLoading, isValidating, mutate } = useSWR<{
     current: MapType;
     next: MapType;
@@ -45,7 +50,7 @@ export default function MapRotationPage() {
             An unexpected error occurred while loading the map rotation
           </div>
           <button
-            className="px-8 py-2 rounded-md text-white text-sm font-normal uppercase bg-apex"
+            className="px-8 py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
             onClick={() => mutate(undefined)}
           >
             Retry
@@ -53,7 +58,11 @@ export default function MapRotationPage() {
         </div>
       ) : (
         <div className="relative flex-grow flex flex-col">
-          <MapRotationView current={data.current} next={data.next} />
+          <MapRotationView
+            current={data.current}
+            next={data.next}
+            settings={settings}
+          />
 
           {isValidating && (
             <div className="absolute top-0 right-0 p-2">
@@ -66,14 +75,18 @@ export default function MapRotationPage() {
   );
 }
 
-function MapRotationView({
-  current,
-  next,
-}: {
+interface MapRotationViewProps {
   current: MapType;
   next: MapType;
-}) {
-  useScheduledMapNotification({ map: next });
+  settings: Settings;
+}
+
+function MapRotationView({ current, next, settings }: MapRotationViewProps) {
+  useScheduledMapNotification({
+    enabled: settings.notifications.maps.includes(next.code),
+    map: next,
+    threshold: settings.notifications.threshold,
+  });
 
   return (
     <div className="flex-grow grid grid-rows-2">
