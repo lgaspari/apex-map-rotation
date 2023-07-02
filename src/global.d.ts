@@ -6,7 +6,7 @@ type DateObject = import('dayjs').Dayjs;
 type ISOString = string;
 
 /**
- * Units of time.
+ * Unit of time.
  */
 type Milliseconds = number;
 

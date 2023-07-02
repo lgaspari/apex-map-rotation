@@ -6,18 +6,20 @@ interface TimeRemainingProps {
 }
 
 export default function TimeRemaining({ to }: TimeRemainingProps) {
-  const [, setNow] = useState(Date.now());
+  const [timeRemaining, setTimeRemaining] = useState(getDiffToNow(to));
 
   /**
    * Re-render component every one second after render.
    */
   useEffect(() => {
     const interval = setInterval(() => {
+      const timeRemaining = getDiffToNow(to);
+
       // zero is still a valid value
-      if (getDiffToNow(to) < 0) {
+      if (timeRemaining < 0) {
         clearInterval(interval);
       } else {
-        setNow(Date.now());
+        setTimeRemaining(timeRemaining);
       }
     }, 1000);
 
@@ -25,6 +27,6 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
   }, [to]);
 
   return (
-    <div role="timer">{format(getDuration(getDiffToNow(to)), 'HH:mm:ss')}</div>
+    <div role="timer">{format(getDuration(timeRemaining), 'HH:mm:ss')}</div>
   );
 }

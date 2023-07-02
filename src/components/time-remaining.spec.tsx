@@ -4,8 +4,11 @@ import { getDate } from 'lib/datetime';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
+const ISOStringToMilliseconds = (date: ISOString): Milliseconds =>
+  getDate(date).valueOf();
+
 function setup({ to }: { to: ISOString }) {
-  const utils = render(<TimeRemaining to={getDate(to).valueOf()} />);
+  const utils = render(<TimeRemaining to={ISOStringToMilliseconds(to)} />);
 
   return {
     ...utils,
@@ -26,9 +29,9 @@ afterEach(() => {
 });
 
 test('should display remaining time', () => {
-  const { timer } = setup({ to: '2019-06-30T16:34:55Z' });
+  const { timer } = setup({ to: '2019-06-30T16:34:01Z' });
 
-  expect(timer).toHaveTextContent('00:34:55');
+  expect(timer).toHaveTextContent('00:34:01');
 });
 
 test('should update remaining time after one second', () => {
@@ -52,5 +55,18 @@ test('should stop timer if completed', () => {
   act(() => {
     jest.advanceTimersByTime(1000);
   });
+  expect(timer).toHaveTextContent('00:00:00');
+});
+
+test('should not display negative values if re-rendered past time', () => {
+  const to = '2019-06-30T16:00:00Z';
+
+  const { rerender, timer } = setup({ to });
+
+  expect(timer).toHaveTextContent('00:00:00');
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  rerender(<TimeRemaining to={ISOStringToMilliseconds(to)} />);
   expect(timer).toHaveTextContent('00:00:00');
 });
