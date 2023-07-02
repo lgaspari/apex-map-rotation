@@ -94,13 +94,13 @@ export default function SettingsModal({
 
         <div className="p-6 flex justify-end gap-2">
           <button
-            className="px-8 py-2 rounded-md text-base text-black font-normal bg-white"
+            className="px-6 sm:px-8 py-2 rounded-md text-base text-black font-normal bg-white"
             onClick={onClose}
           >
             Discard
           </button>
           <button
-            className="px-8 py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
+            className="px-6 sm:px-8 py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
             onClick={handleSave}
           >
             Save

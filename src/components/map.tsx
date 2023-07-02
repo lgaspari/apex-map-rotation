@@ -23,7 +23,7 @@ export default function Map({
         } as React.CSSProperties
       }
     >
-      <div className="p-8 h-[100%] w-[100%] flex flex-col items-start sm:items-center justify-start sm:justify-center backdrop-blur-[2px] hover:backdrop-blur-[1px] transition-[backdrop-filter] ease-in-out duration-300">
+      <div className="p-6 sm:p-8 h-[100%] w-[100%] flex flex-col gap-8 sm:gap-24 items-start sm:items-center justify-between sm:justify-center backdrop-blur-[2px] hover:backdrop-blur-[1px] transition-[backdrop-filter] ease-in-out duration-300">
         <div className="max-w-lg w-[100%] flex flex-col gap-2">
           {/* Badge */}
           <span
@@ -37,7 +37,7 @@ export default function Map({
           </span>
 
           {/* Name */}
-          <div className="text-white font-extrabold text-6xl">
+          <div className="text-white text-4xl sm:text-6xl font-extrabold">
             {MapName[code]}
           </div>
 
@@ -55,7 +55,7 @@ export default function Map({
         </div>
 
         {current && (
-          <div className="mt-24">
+          <div>
             <div className="text-gray-300 text-center font-semibold whitespace-nowrap uppercase">
               Time remaining
             </div>

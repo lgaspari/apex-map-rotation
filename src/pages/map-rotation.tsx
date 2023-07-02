@@ -45,8 +45,8 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
           <Spinner />
         </div>
       ) : !data || error ? (
-        <div className="flex-grow flex flex-col items-center justify-center gap-4">
-          <div className="text-black text-base font-light">
+        <div className="p-8 flex-grow flex flex-col items-center justify-center gap-4">
+          <div className="text-black text-base text-center font-light">
             An unexpected error occurred while loading the map rotation
           </div>
           <button

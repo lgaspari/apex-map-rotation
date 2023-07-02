@@ -35,7 +35,7 @@ export default function App() {
           />
         </div>
 
-        <div className="text-white text-lg font-bold uppercase">
+        <div className="text-white text-lg text-center font-bold uppercase leading-tight sm:leading-normal">
           Map Rotation
         </div>
 
