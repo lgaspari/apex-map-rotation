@@ -1,15 +1,17 @@
 import axios from 'axios';
 import { MapCode } from 'constants/map';
 import { getDateFromUnix } from 'lib/datetime';
-import type MapType from 'types/map';
+import type Map from 'types/map';
+import type MapRotation from 'types/map-rotation';
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_APEX_LEGENDS_API,
 
   /**
-   * Move to `Authorization` header when available.
+   * There's a CORS error when trying to use the `Authorization` header instead
+   * of the `auth` param.
    *
-   * @todo revisit.
+   * @todo move to `Authorization` header when available.
    */
   params: {
     auth: import.meta.env.VITE_APEX_LEGENDS_API_SECRET_TOKEN,
@@ -27,7 +29,7 @@ enum ExternalMapCode {
   worlds_edge_rotation,
 }
 
-interface MapResponse {
+interface ExternalMapResponse {
   asset?: string;
   code: keyof typeof ExternalMapCode;
   DurationInMinutes: number;
@@ -42,6 +44,18 @@ interface MapResponse {
   start: number;
 }
 
+/**
+ * There's an edge-case for the Apex Legends API where if you send a request
+ * right when the map changes, it may return an empty array instead of the
+ * proper response.
+ */
+type ExternalMapRotationResponse =
+  | {
+      current: ExternalMapResponse;
+      next: ExternalMapResponse;
+    }
+  | [];
+
 const MapCodeMapping: Record<keyof typeof ExternalMapCode, MapCode> =
   Object.freeze({
     broken_moon_rotation: MapCode.BrokenMoon,
@@ -51,21 +65,27 @@ const MapCodeMapping: Record<keyof typeof ExternalMapCode, MapCode> =
     worlds_edge_rotation: MapCode.WorldsEdge,
   });
 
-export const getMapRotation = (url: string) => {
-  return api
-    .get<{ current: MapResponse; next: MapResponse }>(url)
-    .then(({ data: { current, next } }) => {
-      const parseMap = ({ code, end, start }: MapResponse): MapType => ({
-        code: MapCodeMapping[code],
-        end: getDateFromUnix(end),
-        start: getDateFromUnix(start),
-      });
+export const getMapRotation = (url: string): Promise<MapRotation> => {
+  return api.get<ExternalMapRotationResponse>(url).then(({ data }) => {
+    if (Array.isArray(data)) {
+      throw new Error(
+        `API returned data with invalid format (response: ${JSON.stringify(
+          data
+        )})`
+      );
+    }
 
-      return {
-        current: parseMap(current),
-        next: parseMap(next),
-      };
+    const { current, next } = data;
+
+    const parseMap = ({ code, end, start }: ExternalMapResponse): Map => ({
+      code: MapCodeMapping[code],
+      end: getDateFromUnix(end).toISOString(),
+      start: getDateFromUnix(start).toISOString(),
     });
-};
 
-export default api;
+    return {
+      current: parseMap(current),
+      next: parseMap(next),
+    };
+  });
+};

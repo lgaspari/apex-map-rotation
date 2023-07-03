@@ -1,14 +1,10 @@
 import { act, render } from '@testing-library/react';
 import TimeRemaining from './time-remaining';
-import { getDate } from 'lib/datetime';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
-const ISOStringToMilliseconds = (date: ISOString): Milliseconds =>
-  getDate(date).valueOf();
-
 function setup({ to }: { to: ISOString }) {
-  const utils = render(<TimeRemaining to={ISOStringToMilliseconds(to)} />);
+  const utils = render(<TimeRemaining to={to} />);
 
   return {
     ...utils,
@@ -67,6 +63,6 @@ test('should not display negative values if re-rendered past time', () => {
   act(() => {
     jest.advanceTimersByTime(1000);
   });
-  rerender(<TimeRemaining to={ISOStringToMilliseconds(to)} />);
+  rerender(<TimeRemaining to={to} />);
   expect(timer).toHaveTextContent('00:00:00');
 });

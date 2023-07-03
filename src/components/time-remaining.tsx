@@ -2,7 +2,7 @@ import { format, getDiffToNow, getDuration } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 
 interface TimeRemainingProps {
-  to: Milliseconds;
+  to: ISOString;
 }
 
 export default function TimeRemaining({ to }: TimeRemainingProps) {

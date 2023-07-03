@@ -1,25 +1,20 @@
 import { act, render, screen } from '@testing-library/react';
 import { MapCode, MapName } from 'constants/map';
-import { getDate } from 'lib/datetime';
 import type MapType from 'types/map';
 import Map, { type MapProps } from './map';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
-const mockMap = ({ code }: Pick<MapType, 'code'>): MapType => {
-  const start = getDate(systemDateTime).subtract(30, 'minutes');
-
+const mockMap = (props: Partial<MapType> = {}): MapType => {
   return {
-    code,
-    end: start.add(1, 'hour'),
-    start,
+    code: MapCode.BrokenMoon,
+    end: new Date().toISOString(),
+    start: new Date().toISOString(),
+    ...props,
   };
 };
 
-function setup({
-  current,
-  map = mockMap({ code: MapCode.BrokenMoon }),
-}: Partial<MapProps>) {
+function setup({ current, map = mockMap() }: Partial<MapProps>) {
   return render(<Map current={current} map={map} />);
 }
 
@@ -42,7 +37,7 @@ test('can display current map', () => {
   expect(screen.queryByText('Next map')).not.toBeInTheDocument();
 
   expect(screen.getByText('Time remaining')).toBeInTheDocument();
-  expect(screen.getByRole('timer')).toHaveTextContent('00:30:00');
+  expect(screen.getByRole('timer')).toHaveTextContent('00:00:00');
 });
 
 test('can display next map', () => {
@@ -59,7 +54,11 @@ describe('Maps', () => {
   test.each(Object.values(MapCode).map((code) => [MapName[code], code]))(
     'can display %s map',
     (name, code) => {
-      const map = mockMap({ code });
+      const map = mockMap({
+        code,
+        end: '2019-06-30T16:30:00Z',
+        start: '2019-06-30T15:30:00Z',
+      });
 
       setup({ map });
 

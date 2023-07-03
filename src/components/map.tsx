@@ -1,14 +1,14 @@
 import TimeRemaining from 'components/time-remaining';
 import { MapImage, MapName } from 'constants/map';
-import { format } from 'lib/datetime';
+import { format, getDate } from 'lib/datetime';
 import type MapType from 'types/map';
+
+const formatMapSchedule = (date: ISOString) => format(getDate(date), 'HH:mm');
 
 export interface MapProps {
   current?: boolean;
   map: MapType;
 }
-
-const formatMapSchedule = (date: DateObject) => format(date, 'HH:mm');
 
 export default function Map({
   current = false,
@@ -60,7 +60,7 @@ export default function Map({
               Time remaining
             </div>
             <div className="text-white text-center font-bold text-3xl">
-              <TimeRemaining to={end.valueOf()} />
+              <TimeRemaining to={end} />
             </div>
           </div>
         )}

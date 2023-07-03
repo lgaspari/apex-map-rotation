@@ -1,8 +1,13 @@
 import { MapName } from 'constants/map';
-import { getDiffToNow, getDuration, humanizeDuration } from 'lib/datetime';
+import {
+  getDate,
+  getDiffToNow,
+  getDuration,
+  humanizeDuration,
+} from 'lib/datetime';
 import { sendNotification } from 'lib/notifications';
-import { useEffect, useMemo, useState } from 'react';
-import type MapType from 'types/map';
+import { useEffect, useState } from 'react';
+import type Map from 'types/map';
 
 interface UseScheduledMapNotificationProps {
   /**
@@ -13,7 +18,7 @@ interface UseScheduledMapNotificationProps {
   /**
    * Map information used for the notification.
    */
-  map: MapType;
+  map: Map;
 
   /**
    * Notification threshold (minutes).
@@ -34,19 +39,14 @@ export default function useScheduledMapNotification({
   const [sent, setSent] = useState(false);
 
   /**
-   * Memoize timestamp to prevent `sent` state reset from occurring more than
-   * once.
+   * Reset `sent` state whenever map `code` or `start` time changes.
    *
-   * @todo revisit, it might be better to memoize map rotation data altogether.
-   */
-  const startTimestamp = useMemo(() => start.valueOf(), [start]);
-
-  /**
-   * Reset `sent` state whenever map information changes.
+   * We don't rely on `end` time as well because there shouldn't be more than
+   * one map with the same code and start time.
    */
   useEffect(() => {
     setSent(false);
-  }, [code, startTimestamp]);
+  }, [code, start]);
 
   /**
    * Schedule map notification by calculating how many milliseconds are between
@@ -63,7 +63,7 @@ export default function useScheduledMapNotification({
 
     if (enabled) {
       const notificationDelay = getDiffToNow(
-        start.subtract(threshold, 'minutes')
+        getDate(start).subtract(threshold, 'minutes')
       );
 
       /**
@@ -107,5 +107,5 @@ export default function useScheduledMapNotification({
 
       () => clearTimeout(timeout);
     }
-  }, [code, enabled, sent, threshold, start]);
+  }, [code, enabled, sent, start, threshold]);
 }

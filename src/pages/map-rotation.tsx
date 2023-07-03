@@ -5,6 +5,7 @@ import { getMapRotation } from 'lib/api';
 import { getDiffToNow } from 'lib/datetime';
 import useSWR from 'swr';
 import type MapType from 'types/map';
+import type MapRotation from 'types/map-rotation';
 import type Settings from 'types/settings';
 
 interface MapRotationPageProps {
@@ -12,31 +13,31 @@ interface MapRotationPageProps {
 }
 
 export default function MapRotationPage({ settings }: MapRotationPageProps) {
-  const { data, error, isLoading, isValidating, mutate } = useSWR<{
-    current: MapType;
-    next: MapType;
-  }>(import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT, {
-    /**
-     * We prefer manual retry over automatic retry. SWR will retry (revalidate)
-     * the data on focus if `revalidateOnFocus` is enabled.
-     */
-    errorRetryCount: 0,
+  const { data, error, isLoading, isValidating, mutate } = useSWR<MapRotation>(
+    import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT,
+    {
+      /**
+       * We prefer manual retry over automatic retry. SWR will retry (revalidate)
+       * the data on focus if `revalidateOnFocus` is enabled.
+       */
+      errorRetryCount: 0,
 
-    /**
-     * Use custom fetcher to parse api data.
-     */
-    fetcher: getMapRotation,
+      /**
+       * Use custom fetcher to parse api data.
+       */
+      fetcher: getMapRotation,
 
-    /**
-     * Refresh when the current map finishes.
-     */
-    refreshInterval: (data) => (data ? getDiffToNow(data.current.end) : 0),
+      /**
+       * Refresh when the current map finishes.
+       */
+      refreshInterval: (data) => (data ? getDiffToNow(data.current.end) : 0),
 
-    /**
-     * Enable refresh when window is not visible.
-     */
-    refreshWhenHidden: true,
-  });
+      /**
+       * Enable refresh when window is not visible.
+       */
+      refreshWhenHidden: true,
+    }
+  );
 
   return (
     <div className="min-h-screen pt-12 flex flex-col">
