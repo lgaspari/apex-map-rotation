@@ -1,13 +1,17 @@
 import { act, render } from '@testing-library/react';
-import TimeRemaining from './time-remaining';
+import TimeRemaining, { type TimeRemainingProps } from './time-remaining';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
-function setup({ to }: { to: ISOString }) {
-  const utils = render(<TimeRemaining to={to} />);
+function setup({
+  to = '2019-06-30T16:00:00Z',
+}: Partial<TimeRemainingProps> = {}) {
+  const { rerender, ...utils } = render(<TimeRemaining to={to} />);
 
   return {
     ...utils,
+    rerender: (props: Partial<TimeRemainingProps> = {}) =>
+      rerender(<TimeRemaining to={to} {...props} />),
     timer: utils.getByRole('timer'),
   };
 }
@@ -55,14 +59,12 @@ test('should stop timer if completed', () => {
 });
 
 test('should not display negative values if re-rendered past time', () => {
-  const to = '2019-06-30T16:00:00Z';
-
-  const { rerender, timer } = setup({ to });
+  const { rerender, timer } = setup();
 
   expect(timer).toHaveTextContent('00:00:00');
   act(() => {
     jest.advanceTimersByTime(1000);
   });
-  rerender(<TimeRemaining to={to} />);
+  rerender();
   expect(timer).toHaveTextContent('00:00:00');
 });
