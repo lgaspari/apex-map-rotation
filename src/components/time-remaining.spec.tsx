@@ -44,6 +44,14 @@ test('should update remaining time after one second', () => {
   expect(timer).toHaveTextContent('00:09:58');
 });
 
+test('should update remaining time when `to` prop changes', () => {
+  const { rerender, timer } = setup();
+
+  expect(timer).toHaveTextContent('00:00:00');
+  rerender({ to: '2019-06-30T18:30:00Z' });
+  expect(timer).toHaveTextContent('02:30:00');
+});
+
 test('should stop timer if completed', () => {
   const { timer } = setup({ to: '2019-06-30T16:00:10Z' });
 

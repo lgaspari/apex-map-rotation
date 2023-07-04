@@ -16,6 +16,13 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
   );
 
   /**
+   * Update state whenever `to` prop changes.
+   */
+  useEffect(() => {
+    setTimeRemaining(calculateTimeRemaining(to));
+  }, [to]);
+
+  /**
    * Re-render component every one second after render.
    */
   useEffect(() => {
