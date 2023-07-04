@@ -28,9 +28,16 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
       fetcher: getMapRotation,
 
       /**
-       * Refresh when the current map finishes.
+       * Refresh data when the current map finishes.
+       *
+       * There's a known issue with the Apex Legends API that returns invalid
+       * data if requested in the exact same instant as the map changes.
+       *
+       * Therefore, instead of sending the request right on time, we delay it
+       * for a second.
        */
-      refreshInterval: (data) => (data ? getDiffToNow(data.current.end) : 0),
+      refreshInterval: (data) =>
+        data ? getDiffToNow(data.current.end) + 1000 : 0,
 
       /**
        * Enable refresh when window is not visible.
