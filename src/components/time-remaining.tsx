@@ -1,5 +1,5 @@
 import { format, getDiffToNow, getDuration } from 'lib/datetime';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const calculateTimeRemaining = (to: ISOString) => {
   const timeRemaining = getDiffToNow(to);
@@ -7,13 +7,19 @@ const calculateTimeRemaining = (to: ISOString) => {
 };
 
 export interface TimeRemainingProps {
+  onTimeRemaining: (timeRemaining: number) => void;
   to: ISOString;
 }
 
-export default function TimeRemaining({ to }: TimeRemainingProps) {
+export default function TimeRemaining({
+  onTimeRemaining,
+  to,
+}: TimeRemainingProps) {
   const [timeRemaining, setTimeRemaining] = useState(
     calculateTimeRemaining(to)
   );
+
+  const onTimeRemainingRef = useRef(onTimeRemaining);
 
   /**
    * Update state whenever `to` prop changes.
@@ -21,6 +27,13 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
   useEffect(() => {
     setTimeRemaining(calculateTimeRemaining(to));
   }, [to]);
+
+  /**
+   * Update callback ref whenever `onTimeRemaining` prop changes.
+   */
+  useEffect(() => {
+    onTimeRemainingRef.current = onTimeRemaining;
+  }, [onTimeRemaining]);
 
   /**
    * Re-render component every one second after render.
@@ -33,6 +46,7 @@ export default function TimeRemaining({ to }: TimeRemainingProps) {
         clearInterval(interval);
       }
 
+      onTimeRemainingRef.current(timeRemaining);
       setTimeRemaining(timeRemaining);
     }, 1000);
 

@@ -1,7 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
 import { MapCode, MapName } from 'constants/map';
+import { getDate } from 'lib/datetime';
 import type MapType from 'types/map';
-import Map, { type MapProps } from './map';
+import Map, {
+  HAS_ENDED_THRESHOLD,
+  IS_ENDING_THRESHOLD,
+  type MapProps,
+} from './map';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
@@ -38,6 +43,42 @@ test('can display current map', () => {
 
   expect(screen.getByText('Time remaining')).toBeInTheDocument();
   expect(screen.getByRole('timer')).toHaveTextContent('00:00:00');
+});
+
+test('should turn "is ending" state when passing the threshold for the current map', () => {
+  const map = mockMap({
+    end: getDate(systemDateTime)
+      .add(IS_ENDING_THRESHOLD, 'milliseconds')
+      .toISOString(),
+  });
+
+  setup({ current: true, map });
+
+  const mapComponent = screen.getByTestId('map');
+
+  expect(mapComponent).toHaveAttribute('data-is-ending', 'false');
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(mapComponent).toHaveAttribute('data-is-ending', 'true');
+});
+
+test('should turn "has ended" state when passing the threshold for the current map', () => {
+  const map = mockMap({
+    end: getDate(systemDateTime)
+      .add(HAS_ENDED_THRESHOLD, 'milliseconds')
+      .toISOString(),
+  });
+
+  setup({ current: true, map });
+
+  const mapComponent = screen.getByTestId('map');
+
+  expect(mapComponent).toHaveAttribute('data-has-ended', 'false');
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(mapComponent).toHaveAttribute('data-has-ended', 'true');
 });
 
 test('can display next map', () => {

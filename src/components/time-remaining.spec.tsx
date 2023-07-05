@@ -4,14 +4,20 @@ import TimeRemaining, { type TimeRemainingProps } from './time-remaining';
 const systemDateTime = '2019-06-30T16:00:00Z';
 
 function setup({
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  onTimeRemaining = () => {},
   to = '2019-06-30T16:00:00Z',
 }: Partial<TimeRemainingProps> = {}) {
-  const { rerender, ...utils } = render(<TimeRemaining to={to} />);
+  const { rerender, ...utils } = render(
+    <TimeRemaining onTimeRemaining={onTimeRemaining} to={to} />
+  );
 
   return {
     ...utils,
     rerender: (props: Partial<TimeRemainingProps> = {}) =>
-      rerender(<TimeRemaining to={to} {...props} />),
+      rerender(
+        <TimeRemaining onTimeRemaining={onTimeRemaining} to={to} {...props} />
+      ),
     timer: utils.getByRole('timer'),
   };
 }
@@ -64,6 +70,44 @@ test('should stop timer if completed', () => {
     jest.advanceTimersByTime(1000);
   });
   expect(timer).toHaveTextContent('00:00:00');
+});
+
+test('should trigger `onTimeRemaining` callback every second', () => {
+  const onTimeRemaining = jest.fn();
+
+  setup({ onTimeRemaining, to: '2019-06-30T16:00:02Z' });
+
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(onTimeRemaining).toHaveBeenCalledWith(1000);
+
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(onTimeRemaining).toHaveBeenCalledWith(0);
+});
+
+test('should trigger updated `onTimeRemaining` callback', () => {
+  const onTimeRemaining1 = jest.fn();
+  const onTimeRemaining2 = jest.fn();
+
+  const { rerender } = setup({
+    onTimeRemaining: onTimeRemaining1,
+    to: '2019-06-30T16:00:02Z',
+  });
+
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(onTimeRemaining1).toHaveBeenCalledWith(1000);
+
+  rerender({ onTimeRemaining: onTimeRemaining2 });
+  act(() => {
+    jest.advanceTimersByTime(1000);
+  });
+  expect(onTimeRemaining2).toHaveBeenCalledWith(0);
+  expect(onTimeRemaining1).toHaveBeenCalledTimes(1);
 });
 
 test('should not display negative values if re-rendered past time', () => {
