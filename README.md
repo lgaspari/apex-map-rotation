@@ -64,6 +64,10 @@ Further, for generating the minimal PWA assets needed, we use [Vite PWA Assets G
 npm run generate-pwa-assets
 ```
 
+There are two alternatives for generating assets:
+- https://realfavicongenerator.net/
+- https://maskable.app/editor
+
 > Unless requested, we shall only update the assets we have without adding new ones.
 
 ### Troubleshooting
