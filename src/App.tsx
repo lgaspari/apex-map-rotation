@@ -1,6 +1,7 @@
 import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
 import SettingsModal from 'components/settings-modal';
+import UpdatePrompt from 'components/update-prompt';
 import { MapCode } from 'constants/map';
 import { Threshold } from 'constants/threshold';
 import useLocalStorage from 'hooks/use-local-storage';
@@ -58,6 +59,9 @@ export default function App() {
 
       {/* Prompt for browser notifications */}
       <NotificationsPrompt />
+
+      {/* PWA Update Prompt */}
+      <UpdatePrompt />
     </div>
   );
 }

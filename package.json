@@ -13,7 +13,8 @@
     "start:production": "npm run build && vite preview",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "generate-pwa-assets": "pwa-assets-generator --preset minimal public/logo.svg"
   },
   "dependencies": {
     "axios": "^1.4.0",
@@ -35,6 +36,7 @@
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
+    "@vite-pwa/assets-generator": "^0.0.3",
     "@vitejs/plugin-react": "^2.0.1",
     "autoprefixer": "^10.4.14",
     "babel-preset-vite": "^1.0.4",
@@ -51,6 +53,7 @@
     "tailwindcss": "^3.3.2",
     "typescript": "^4.6.4",
     "vite": "^3.0.7",
+    "vite-plugin-pwa": "^0.16.4",
     "vite-plugin-svgr": "^3.2.0",
     "vite-tsconfig-paths": "^4.2.0"
   }
