@@ -1,4 +1,5 @@
 import SettingsModal from 'components/settings-modal';
+import UpdatePrompt from 'components/update-prompt';
 import { MapCode } from 'constants/map';
 import useLocalStorage from 'hooks/use-local-storage';
 import usePromptNotificationPermission from 'hooks/use-prompt-notification-permission';
@@ -59,6 +60,9 @@ export default function App() {
         setSettings={setSettings}
         settings={settings}
       />
+
+      {/* PWA Update Prompt */}
+      <UpdatePrompt />
     </div>
   );
 }
