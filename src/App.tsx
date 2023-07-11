@@ -37,6 +37,7 @@ export default function App() {
           <button
             className="rounded-sm text-white"
             onClick={() => setOpenedSettingsModal(true)}
+            title="Settings"
           >
             <SettingsIcon />
           </button>
