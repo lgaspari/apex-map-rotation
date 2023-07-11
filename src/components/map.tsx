@@ -1,5 +1,10 @@
+import BrokenMoon from 'assets/maps/broken_moon.png';
+import KingsCanyon from 'assets/maps/kings_canyon.png';
+import Olympus from 'assets/maps/olympus.png';
+import StormPoint from 'assets/maps/storm_point.png';
+import WorldsEdge from 'assets/maps/worlds_edge.png';
 import TimeRemaining from 'components/time-remaining';
-import { MapName } from 'constants/map';
+import { MapCode, MapName } from 'constants/map';
 import { format, getDate } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 import type MapType from 'types/map';
@@ -14,7 +19,21 @@ export const HAS_ENDED_THRESHOLD = 5 * 1000; // 5 seconds
  */
 export const IS_ENDING_THRESHOLD = 15 * 60 * 1000; // 15 minutes
 
+/**
+ * Formats date into readable schedule format.
+ */
 const formatMapSchedule = (date: ISOString) => format(getDate(date), 'HH:mm');
+
+/**
+ * Map background images mapping.
+ */
+const MapImage: Record<MapCode, string> = Object.freeze({
+  [MapCode.BrokenMoon]: BrokenMoon,
+  [MapCode.KingsCanyon]: KingsCanyon,
+  [MapCode.Olympus]: Olympus,
+  [MapCode.StormPoint]: StormPoint,
+  [MapCode.WorldsEdge]: WorldsEdge,
+});
 
 export interface MapProps {
   current?: boolean;
@@ -48,7 +67,7 @@ export default function Map({
       }`}
       style={
         {
-          '--background-image': `url('/assets/${code}.png')`,
+          '--background-image': `url('${MapImage[code]}')`,
         } as React.CSSProperties
       }
       {...(current

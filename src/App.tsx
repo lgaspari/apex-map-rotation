@@ -1,3 +1,4 @@
+import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
 import SettingsModal from 'components/settings-modal';
 import { MapCode } from 'constants/map';
@@ -25,12 +26,7 @@ export default function App() {
       {/* Header */}
       <div className="fixed z-10 top-0 left-0 right-0 h-12 p-2 flex justify-between items-center bg-apex drop-shadow-lg">
         <div className="w-16 flex items-center justify-start">
-          <img
-            alt="Apex Legends Logo"
-            height={32}
-            src="/assets/apex-logo.svg"
-            width={48}
-          />
+          <img alt="Apex Legends Logo" height={32} src={ApexLogo} width={48} />
         </div>
 
         <div className="text-white text-lg text-center font-bold uppercase leading-tight sm:leading-normal">
