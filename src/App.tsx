@@ -28,7 +28,7 @@ export default function App() {
           <img
             alt="Apex Legends Logo"
             height={32}
-            src={import.meta.env.VITE_APEX_LEGENDS_LOGO_URL}
+            src="/assets/apex-logo.svg"
             width={48}
           />
         </div>
