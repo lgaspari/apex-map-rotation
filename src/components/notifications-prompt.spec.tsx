@@ -96,10 +96,14 @@ test('should send dummy notification if user grants permission', async () => {
 
   await user.click(screen.getByRole('button', { name: 'Yes' }));
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
+  await waitForElementToBeRemoved(
+    () =>
+      screen.queryByRole('dialog', {
+        name: "🔔 Hey, don't miss your favorite map!",
+      }),
+    {
+      timeout: 1000,
+    }
   );
 
   expect(sendNotification).toHaveBeenCalledWith({
@@ -125,9 +129,13 @@ test('should announce disabled notifications if not supported', async () => {
 
   await user.click(screen.getByRole('button', { name: 'Understood' }));
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: '🔕 Disabled map notifications',
-    })
+  await waitForElementToBeRemoved(
+    () =>
+      screen.queryByRole('dialog', {
+        name: '🔕 Disabled map notifications',
+      }),
+    {
+      timeout: 1000,
+    }
   );
 });
