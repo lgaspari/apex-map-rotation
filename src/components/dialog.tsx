@@ -27,7 +27,7 @@ export default function Dialog({
          * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role
          */
         aria-label={title}
-        className="max-w-md p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
+        className="p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
         role="dialog"
       >
         <div className="flex flex-row items-center justify-between gap-2 mb-2 text-white">
@@ -124,8 +124,9 @@ Dialog.Transition = function DialogTransition({
 
   return (
     <div
-      className={`z-10 fixed bottom-4 right-0 ${
-        internalTransition ? '-translate-x-4' : 'translate-x-full'
+      // Adding `p-4` here to prevent dialog from touching the screen borders.
+      className={`z-10 fixed bottom-0 right-0 p-4 ${
+        internalTransition ? 'translate-x-0' : 'translate-x-full'
       } transition-transform duration-[1000ms]`}
     >
       {internalMounted && children}
