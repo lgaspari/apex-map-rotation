@@ -1,5 +1,5 @@
 import TimeRemaining from 'components/time-remaining';
-import { MapImage, MapName } from 'constants/map';
+import { MapName } from 'constants/map';
 import { format, getDate } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 import type MapType from 'types/map';
@@ -48,7 +48,7 @@ export default function Map({
       }`}
       style={
         {
-          '--background-image': `url('${MapImage[code]}')`,
+          '--background-image': `url('/assets/${code}.png')`,
         } as React.CSSProperties
       }
       {...(current
