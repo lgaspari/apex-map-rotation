@@ -1,7 +1,7 @@
+import NotificationsPrompt from 'components/notifications-prompt';
 import SettingsModal from 'components/settings-modal';
 import { MapCode } from 'constants/map';
 import useLocalStorage from 'hooks/use-local-storage';
-import usePromptNotificationPermission from 'hooks/use-prompt-notification-permission';
 import { SettingsIcon } from 'icons';
 import MapRotationPage from 'pages/map-rotation';
 import { useState } from 'react';
@@ -19,8 +19,6 @@ export default function App() {
       },
     }
   );
-
-  usePromptNotificationPermission();
 
   return (
     <div>
@@ -59,6 +57,9 @@ export default function App() {
         setSettings={setSettings}
         settings={settings}
       />
+
+      {/* Prompt for browser notifications */}
+      <NotificationsPrompt />
     </div>
   );
 }
