@@ -10,9 +10,10 @@ Apex Legends Map Rotation was born from an effort to be able to know what map is
 
 ## Features
 
-- Map rotation
+- Real-time map rotation
 - Foreground notifications — _background notifications are on the way!_
-- Customizable maps notifications - _threshold configuration on the way!_
+  - Customizable maps
+  - Customizable threshold
 
 ## Contribute
 

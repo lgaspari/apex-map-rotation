@@ -2,6 +2,7 @@ import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
 import SettingsModal from 'components/settings-modal';
 import { MapCode } from 'constants/map';
+import { Threshold } from 'constants/threshold';
 import useLocalStorage from 'hooks/use-local-storage';
 import { SettingsIcon } from 'icons';
 import MapRotationPage from 'pages/map-rotation';
@@ -16,7 +17,7 @@ export default function App() {
     {
       notifications: {
         maps: Object.values(MapCode),
-        threshold: 15,
+        threshold: Threshold.FIFTEEN_MINUTES,
       },
     }
   );

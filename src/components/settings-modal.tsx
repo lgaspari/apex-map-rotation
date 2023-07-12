@@ -1,4 +1,5 @@
 import { MapName } from 'constants/map';
+import { ThresholdLabel } from 'constants/threshold';
 import { useEffect, useState } from 'react';
 import type Settings from 'types/settings';
 
@@ -28,7 +29,7 @@ export default function SettingsModal({
     }
   }, [opened, settings]);
 
-  const handleMapClick = (code: string, checked: boolean) => {
+  const handleMapChange = (code: string, checked: boolean) => {
     setDraftSettings(
       ({ notifications: { maps, ...notifications }, ...draftSettings }) => ({
         ...draftSettings,
@@ -38,6 +39,16 @@ export default function SettingsModal({
         },
       })
     );
+  };
+
+  const handleThresholdChange = (threshold: number) => {
+    setDraftSettings(({ notifications, ...draftSettings }) => ({
+      ...draftSettings,
+      notifications: {
+        ...notifications,
+        threshold,
+      },
+    }));
   };
 
   const handleSave = () => {
@@ -59,36 +70,54 @@ export default function SettingsModal({
           mounted ? 'scale-100' : 'scale-50'
         } transition-transform duration-500`}
       >
-        <div className="p-6 text-3xl text-white font-bold">Settings</div>
+        <h2 className="p-6 text-3xl text-white font-bold">Settings</h2>
 
         <div className="px-6 py-6 text-gray-200 border-y border-gray-800 border-solid">
-          <div
-            className="text-base font-light"
-            data-testid="notification-threshold"
-          >
-            Notify me <span className="font-semibold">{threshold} minutes</span>{' '}
-            before the following maps:
-          </div>
+          <h3 className="mb-4 text-xl text-white font-bold">Notifications</h3>
 
-          <div className="mt-4 px-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-            {Object.entries(MapName).map(([code, name]) => (
-              <label
-                className="w-fit flex items-center gap-2 hover:cursor-pointer"
-                htmlFor={code}
-                key={code}
+          <div>
+            {/* Threshold */}
+            <div className="mb-2 flex flex-row items-center gap-2">
+              <div className="font-light">Threshold:</div>
+              <select
+                className="appearance-none text-center bg-transparent border-b-2 border-b-apex"
+                name="threshold"
+                onChange={(e) => handleThresholdChange(Number(e.target.value))}
+                value={threshold}
               >
-                <input
-                  checked={maps.includes(code)}
-                  className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
-                  id={code}
-                  onChange={(e) => handleMapClick(code, e.target.checked)}
-                  type="checkbox"
-                />
-                <span className="text-white text-base font-extralight">
-                  {name}
-                </span>
-              </label>
-            ))}
+                {Object.entries(ThresholdLabel).map(([threshold, label]) => (
+                  <option key={threshold} value={threshold}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Maps */}
+            <div>
+              <div className="mb-2 font-light">Maps:</div>
+              <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {Object.entries(MapName).map(([code, name]) => (
+                  <label
+                    className="w-fit flex items-center gap-2 hover:cursor-pointer"
+                    htmlFor={code}
+                    key={code}
+                  >
+                    <input
+                      checked={maps.includes(code)}
+                      className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
+                      id={code}
+                      name="maps"
+                      onChange={(e) => handleMapChange(code, e.target.checked)}
+                      type="checkbox"
+                    />
+                    <span className="text-white text-base font-extralight">
+                      {name}
+                    </span>
+                  </label>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

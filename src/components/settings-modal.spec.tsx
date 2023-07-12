@@ -1,15 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MapCode, MapName } from 'constants/map';
+import { Threshold } from 'constants/threshold';
 import type SettingsType from 'types/settings';
 import SettingsModal, { type SettingsModalProps } from './settings-modal';
 
-const _maps = Object.values(MapCode);
-const _threshold = 15;
+const initialMaps = Object.values(MapCode);
+const initialThreshold = Threshold.FIFTEEN_MINUTES;
 
 const mockNotifications = ({
-  maps = _maps,
-  threshold = _threshold,
+  maps = initialMaps,
+  threshold = initialThreshold,
 }: Partial<
   SettingsType['notifications']
 > = {}): SettingsType['notifications'] => {
@@ -48,9 +49,18 @@ function setup({
 
   return {
     ...utils,
+    user,
+  };
+}
+
+function setupNotifications(props: Partial<SettingsModalProps> = {}) {
+  const utils = setup(props);
+
+  return {
+    ...utils,
     getMapCheckbox: (code: MapCode) =>
       utils.getByRole('checkbox', { name: MapName[code] }),
-    user,
+    thresholdSelect: utils.getByRole('combobox'),
   };
 }
 
@@ -64,63 +74,108 @@ test('can close modal', async () => {
 
   const { user } = setup({ onClose });
 
+  expect(screen.getByText('Settings')).toBeInTheDocument();
+
   await user.click(screen.getByRole('button', { name: 'Discard' }));
   expect(onClose).toHaveBeenCalled();
 });
 
-test('can display settings', () => {
-  const { getMapCheckbox } = setup();
+describe('Notifications', () => {
+  test('can display notification settings', () => {
+    const { getMapCheckbox, thresholdSelect } = setupNotifications();
 
-  expect(screen.getByText('Settings')).toBeInTheDocument();
-  expect(screen.getByTestId('notification-threshold')).toHaveTextContent(
-    `Notify me ${_threshold} minutes before the following maps`
-  );
+    expect(screen.getByText('Notifications')).toBeInTheDocument();
 
-  _maps.forEach((code) => {
-    expect(getMapCheckbox(code)).toBeChecked();
-  });
-});
+    // threshold
+    expect(screen.getByText('Threshold:')).toBeInTheDocument();
+    expect(thresholdSelect).toHaveValue(String(initialThreshold));
 
-test('can update maps notification preferences', async () => {
-  const maps = [MapCode.BrokenMoon, MapCode.Olympus, MapCode.WorldsEdge];
-  const notifications = mockNotifications({ maps });
-  const onClose = jest.fn();
-  const setSettings = jest.fn();
-
-  const { getMapCheckbox, user } = setup({
-    onClose,
-    setSettings,
-    settings: mockSettings({ notifications }),
+    // maps
+    expect(screen.getByText('Maps:')).toBeInTheDocument();
+    initialMaps.forEach((code) => {
+      expect(getMapCheckbox(code)).toBeChecked();
+    });
   });
 
-  // before
-  maps.forEach((code) => {
-    expect(getMapCheckbox(code)).toBeChecked();
+  test('can update notification threshold preferences', async () => {
+    const threshold = Threshold.FIVE_MINUTES;
+    const notifications = mockNotifications({ threshold });
+    const onClose = jest.fn();
+    const selectedThreshold = Threshold.SIXTY_MINUTES;
+    const setSettings = jest.fn();
+
+    const { thresholdSelect, user } = setupNotifications({
+      onClose,
+      setSettings,
+      settings: mockSettings({ notifications }),
+    });
+
+    // before
+    expect(thresholdSelect).toHaveValue(String(threshold));
+
+    // change selection
+    await user.selectOptions(
+      thresholdSelect,
+      screen.getByRole('option', { name: '1 hour' })
+    );
+
+    // after
+    expect(thresholdSelect).toHaveValue(String(selectedThreshold));
+
+    // confirm changes
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(setSettings).toHaveBeenCalledWith({
+      notifications: {
+        ...notifications,
+        threshold: selectedThreshold,
+      },
+    });
+    expect(onClose).toHaveBeenCalled();
   });
 
-  // toggle selection
-  await user.click(getMapCheckbox(MapCode.BrokenMoon)); // unselect
-  await user.click(getMapCheckbox(MapCode.Olympus)); // unselect
-  await user.click(getMapCheckbox(MapCode.KingsCanyon)); // select
+  test('can update maps notification preferences', async () => {
+    const maps = [MapCode.BrokenMoon, MapCode.Olympus, MapCode.WorldsEdge];
+    const notifications = mockNotifications({ maps });
+    const onClose = jest.fn();
+    const setSettings = jest.fn();
 
-  // after
-  const selectedMaps = [MapCode.WorldsEdge, MapCode.KingsCanyon];
-  selectedMaps.forEach((code) => {
-    expect(getMapCheckbox(code)).toBeChecked();
-  });
+    const { getMapCheckbox, user } = setupNotifications({
+      onClose,
+      setSettings,
+      settings: mockSettings({ notifications }),
+    });
 
-  const unselectedMaps = _maps.filter((code) => !selectedMaps.includes(code));
-  unselectedMaps.forEach((code) => {
-    expect(getMapCheckbox(code)).not.toBeChecked();
-  });
+    // before
+    maps.forEach((code) => {
+      expect(getMapCheckbox(code)).toBeChecked();
+    });
 
-  // confirm changes
-  await user.click(screen.getByRole('button', { name: 'Save' }));
-  expect(setSettings).toHaveBeenCalledWith({
-    notifications: {
-      ...notifications,
-      maps: selectedMaps,
-    },
+    // toggle selection
+    await user.click(getMapCheckbox(MapCode.BrokenMoon)); // unselect
+    await user.click(getMapCheckbox(MapCode.Olympus)); // unselect
+    await user.click(getMapCheckbox(MapCode.KingsCanyon)); // select
+
+    // after
+    const selectedMaps = [MapCode.WorldsEdge, MapCode.KingsCanyon];
+    selectedMaps.forEach((code) => {
+      expect(getMapCheckbox(code)).toBeChecked();
+    });
+
+    const unselectedMaps = initialMaps.filter(
+      (code) => !selectedMaps.includes(code)
+    );
+    unselectedMaps.forEach((code) => {
+      expect(getMapCheckbox(code)).not.toBeChecked();
+    });
+
+    // confirm changes
+    await user.click(screen.getByRole('button', { name: 'Save' }));
+    expect(setSettings).toHaveBeenCalledWith({
+      notifications: {
+        ...notifications,
+        maps: selectedMaps,
+      },
+    });
+    expect(onClose).toHaveBeenCalled();
   });
-  expect(onClose).toHaveBeenCalled();
 });
