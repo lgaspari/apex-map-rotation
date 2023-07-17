@@ -1,5 +1,6 @@
 import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
+import PWAInstallPrompt from 'components/pwa-install-prompt';
 import SettingsModal from 'components/settings-modal';
 import UpdatePrompt from 'components/update-prompt';
 import { MapCode } from 'constants/map';
@@ -62,6 +63,9 @@ export default function App() {
 
       {/* PWA Update Prompt */}
       <UpdatePrompt />
+
+      {/* PWA Install Prompt */}
+      <PWAInstallPrompt />
     </div>
   );
 }

@@ -27,7 +27,7 @@ export default function Dialog({
          * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role
          */
         aria-label={title}
-        className="p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
+        className="sm:w-[440px] p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
         role="dialog"
       >
         <div className="flex flex-row items-center justify-between gap-2 mb-2 text-white">
@@ -104,19 +104,23 @@ Dialog.Transition = function DialogTransition({
   const [internalTransition, setInternalTransition] = useState(false);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
     if (mounted) {
       setInternalMounted(mounted);
-      setTimeout(() => {
+      timeout = setTimeout(() => {
         setInternalTransition(mounted);
       });
     } else {
       if (internalMounted) {
         setInternalTransition(mounted);
-        setTimeout(() => {
+        timeout = setTimeout(() => {
           setInternalMounted(mounted);
         }, 1000);
       }
     }
+
+    return () => clearTimeout(timeout);
     // We cannot use `internalMounted` as dependency, otherwise it will be a
     // cyclic side effect.
     // eslint-disable-next-line react-hooks/exhaustive-deps

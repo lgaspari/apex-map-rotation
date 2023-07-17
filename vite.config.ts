@@ -76,4 +76,8 @@ export default defineConfig(({ mode }) => ({
     // Enables fast refresh and jsx runtime (no import React).
     react(),
   ],
+
+  server: {
+    host: true,
+  },
 }));
