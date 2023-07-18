@@ -95,6 +95,76 @@ npm run deploy
 
 > Please, refrain from deploying into production without notice.
 
+## Progressive Web Application
+
+> This is an experimental feature and it might be disabled at any time.
+
+We use [Vite](https://vitejs.dev/) to run and build the application. Therefore, for setting up the Progressive Web Application, we use the [Vite PWA](https://vite-pwa-org.netlify.app/) plugin, which makes the configuration seamlessly.
+
+### PWA Support
+
+#### Desktop Support
+
+| Brave | Chrome | Edge | Firefox | Safari |
+| :-    | :-     | :-   | :-      | :-     |
+| Yes   | Yes    | Yes  | No      | No     |
+
+> Chromebooks, Linux, macOS, Windows
+
+#### iOS Support
+
+| Brave | Chrome | Edge | Firefox | Safari |
+| :-    | :-     | :-   | :-      | :-     |
+| No    | No     | No   | No      | Yes    |
+
+#### Android Support
+
+| Brave | Chrome | Edge | Firefox | Safari |
+| :-    | :-     | :-   | :-      | :-     |
+| Yes   | Yes    | Yes  | Yes     | N/A    |
+
+### PWA Assets generation
+
+For generating the minimal PWA assets needed, we use [Vite PWA Assets Generator](https://vite-pwa-org.netlify.app/assets-generator/). The command below will generate the assets based on the file `public/logo.svg` using the configuration from [pwa-assets.config.ts](pwa-assets.config.ts). Make sure it's been updated before running it:
+
+```bash
+npm run generate-pwa-assets
+```
+
+**IMPORTANT:** there's an [issue](https://github.com/vite-pwa/assets-generator/issues/5) in the Vite PWA Assets Generator in regards an extra file that's being generated due to a workaround applied for generating a favicon with different size than the default (48x48 (desired) vs. 64x64 (original)).
+
+### PWA Troubleshooting
+
+#### Installation
+
+If you're facing issues with the PWA installation, you can use Lighthouse from
+the Dev Tools in order to check what's missing for it to work.
+
+These are the steps for Chromium based browsers:
+
+1. Open Dev Tools
+2. Go to Lighthouse tab
+3. Check Progressive Web App category
+4. Press Analyze page load button
+5. Review results
+
+#### Update service worker
+
+The application should prompt if there's any update to the Service Worker.
+However, to make things easier, you can turn on an option from Dev Tools to
+update the service workers on reload:
+
+1. Open Dev Tools
+2. Go to Application tab
+3. Check Update on reload option
+4. Reload the tab using `CTRL+SHIFT+R`
+
+If you're still facing issues you can update the service worker yourself by pressing the Update button.
+
+#### Update assets
+
+When updating PWA assets, you might not be able to see the new assets loaded. If that's the case, please make sure to re-install the application.
+
 ## Credits
 
 - Thanks to [EA](https://www.ea.com/) and the [Respawn](https://www.respawn.com/) team for having developed the Apex Legends.

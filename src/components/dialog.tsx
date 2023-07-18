@@ -27,7 +27,13 @@ export default function Dialog({
          * @see https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/dialog_role
          */
         aria-label={title}
-        className="p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
+        /**
+         * Temporarily adding a max width so overlapping dialogs are shown one
+         * below the other.
+         *
+         * @todo remove `max-w-sm` class in favor of a better mechanism.
+         */
+        className="max-w-sm p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
         role="dialog"
       >
         <div className="flex flex-row items-center justify-between gap-2 mb-2 text-white">
@@ -60,7 +66,7 @@ Dialog.CancelButton = function CancelButton({
 }) {
   return (
     <button
-      className="px-4 sm:px-6 py-1 sm:py-2 rounded-md text-base text-black font-normal bg-white"
+      className="px-4 py-1 rounded-md text-base text-black font-normal bg-white"
       onClick={onClick}
     >
       {children}
@@ -77,7 +83,7 @@ Dialog.ConfirmButton = function ConfirmButton({
 }) {
   return (
     <button
-      className="px-4 sm:px-6 py-1 sm:py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
+      className="px-4 py-1 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
       onClick={onClick}
     >
       {children}

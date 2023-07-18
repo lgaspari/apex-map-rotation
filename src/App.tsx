@@ -1,5 +1,6 @@
 import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
+import PWAUpdatePrompt from 'components/pwa-update-prompt';
 import SettingsModal from 'components/settings-modal';
 import { MapCode } from 'constants/map';
 import { Threshold } from 'constants/threshold';
@@ -45,10 +46,10 @@ export default function App() {
         </div>
       </div>
 
-      {/* Content */}
+      {/* Pages */}
       <MapRotationPage settings={settings} />
 
-      {/* Settings */}
+      {/* Modals */}
       <SettingsModal
         onClose={() => setOpenedSettingsModal(false)}
         opened={openedSettingsModal}
@@ -56,8 +57,9 @@ export default function App() {
         settings={settings}
       />
 
-      {/* Prompt for browser notifications */}
+      {/* Prompts */}
       <NotificationsPrompt />
+      <PWAUpdatePrompt />
     </div>
   );
 }
