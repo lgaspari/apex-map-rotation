@@ -131,13 +131,11 @@ For generating the minimal PWA assets needed, we use [Vite PWA Assets Generator]
 npm run generate-pwa-assets
 ```
 
-**IMPORTANT:** there's an [issue](https://github.com/vite-pwa/assets-generator/issues/5) in the Vite PWA Assets Generator in regards an extra file that's being generated due to a workaround applied for generating a favicon with different size than the default (48x48 (desired) vs. 64x64 (original)).
-
 ### PWA Troubleshooting
 
 #### Installation
 
-If you're facing issues with the PWA installation, you can use Lighthouse from
+If you're having issues with the PWA installation, you can use Lighthouse from
 the Dev Tools in order to check what's missing for it to work.
 
 These are the steps for Chromium based browsers:

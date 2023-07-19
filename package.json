@@ -36,7 +36,7 @@
     "@types/react-dom": "^18.0.6",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
-    "@vite-pwa/assets-generator": "^0.0.3",
+    "@vite-pwa/assets-generator": "^0.0.4",
     "@vitejs/plugin-react": "^2.0.1",
     "autoprefixer": "^10.4.14",
     "babel-preset-vite": "^1.0.4",
