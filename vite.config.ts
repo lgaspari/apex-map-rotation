@@ -27,12 +27,10 @@ export default defineConfig(({ mode }) => {
         disable: env.VITE_PWA_ENABLED !== 'true',
 
         // Public resources, no need to include manifest assets.
-        includeAssets: [
-          'apple-touch-icon-180x180',
-          'favicon.ico',
-          'logo.svg',
-          'robots.txt',
-        ],
+        includeAssets: ['robots.txt'],
+
+        // Don't include manifest icons in favor of `workbox.globPatterns`.
+        includeManifestIcons: false,
 
         // Manifest configuration.
         // https://vite-pwa-org.netlify.app/guide/pwa-minimal-requirements.html
@@ -78,6 +76,12 @@ export default defineConfig(({ mode }) => {
          * @see https://vite-pwa-org.netlify.app/guide/auto-update.html#automatic-reload
          */
         registerType: 'prompt',
+
+        // Workbox options.
+        workbox: {
+          // Includes .ico, .png, and .svg files
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        },
       }),
 
       // Let's Vite understand non-relative imports via baseUrl or paths.
