@@ -14,6 +14,7 @@ Apex Legends Map Rotation was born from an effort to be able to know what map is
 - Foreground notifications — _background notifications are on the way!_
   - Customizable maps
   - Customizable threshold
+- Installable application (see [support](#pwa-support))
 
 ## Contribute
 
