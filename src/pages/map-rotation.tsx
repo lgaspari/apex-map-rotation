@@ -47,7 +47,7 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
   );
 
   return (
-    <div className="min-h-screen pt-12 flex flex-col">
+    <>
       {isLoading ? (
         <div className="flex-grow flex items-center justify-center">
           <Spinner />
@@ -79,7 +79,7 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
           )}
         </div>
       )}
-    </div>
+    </>
   );
 }
 
