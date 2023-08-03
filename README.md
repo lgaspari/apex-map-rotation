@@ -14,7 +14,7 @@ Apex Legends Map Rotation was born from an effort to be able to know what map is
 - Foreground notifications — _background notifications are on the way!_
   - Customizable maps
   - Customizable threshold
-- Installable application (see [support](#progressive-web-application-1))
+- Installable application (see [support](#progressive-web-application-https-required-except-localhost))
 
 ## Contribute
 
@@ -142,20 +142,20 @@ If you're still facing issues you can update the service worker yourself by pres
 
 When updating PWA assets, you might not be able to see the new assets loaded. If that's the case, please make sure to re-install the application.
 
-## Cross-browser Compatibility (using HTTP only)
+## Cross-browser Compatibility (HTTPS)
 
 ### Notifications
 
 We use the Notification interface of the Notifications API to configure and display desktop notifications to the user. You can read more about the Notifications API in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/notification).
 
-### Notification API
+#### Notification API
 
 > Checking API support through `'Notification' in window`.
 
 | Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
 | :-        | :-      | :-      | :-      | :-      | :-      | :-           |
 | macOS     | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
-| iOS       | No      | No      | No      | No      | Yes     | - -          |
+| iOS       | No      | No      | No      | No      | Yes ¹   | **¹** experimental feature must be enabled. |
 | Android   | Yes     | Yes     | Yes     | Yes     | N/A     | - -          |
 
 #### Prompt Notification Permission
@@ -164,39 +164,39 @@ We use the Notification interface of the Notifications API to configure and disp
 
 | Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
 | :-        | :-      | :-      | :-      | :-      | :-      | :-           |
-| macOS     | Yes¹    | Yes¹    | Yes¹    | Yes     | Yes²    | **¹** may require additional manual steps to grant permission. <br />**²** `Notification.permission` value is always `'default'` for Safari when using HTTP. |
-| iOS       | N/A     | N/A     | N/A     | N/A     | No¹     | **¹** `Notification.permission` is always `'denied'` for Safari when using HTTP. |
-| Android   | No¹     | No¹     | No¹     | No²     | N/A     | **¹** `Notification.permission` value is always `'denied'` for Chromium-based browsers when using HTTP. <br />**²** `Notification.permission` value is always `'default'` for Firefox when using HTTP. |
+| macOS     | Yes ¹   | Yes ¹   | Yes ¹   | Yes     | Yes     | **¹** may require additional manual steps to grant permission. |
+| iOS       | N/A     | N/A     | N/A     | N/A     | Yes ¹   | **¹** PWA support only. |
+| Android   | Yes     | Yes     | Yes ¹   | Yes ²   | N/A     | **¹** may require additional manual steps to grant permission. <br />**²** may display non-secure page due to self-signed certificate. |
 
-### Send Notifications
+#### Send Notifications
 
 > Creating a new Notification instance using `new Notification(title, options);`
 
 | Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
 | :-        | :-      | :-      | :-      | :-      | :-      | :-           |
 | macOS     | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
-| iOS       | N/A     | N/A     | N/A     | N/A     | TBD¹    | **¹** To be determined |
-| Android   | TBD¹    | TBD¹    | TBD¹    | TBD¹    | N/A     | **¹** To be determined |
+| iOS       | N/A     | N/A     | N/A     | N/A     | No ¹    | **¹** not even from PWA. |
+| Android   | No      | No      | No      | Yes     | N/A     | - -          |
 
-### Service Workers
+### Service Workers (HTTPS required, except localhost)
 
 Service workers essentially act as proxy servers that sit between web applications, the browser, and the network (when available). You can read more about the Service Worker API in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).
 
-| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  |
-| :-        | :-      | :-      | :-      | :-      | :-      |
-| macOS     | Yes     | Yes     | Yes     | Yes     | Yes     |
-| iOS       | Yes     | Yes     | Yes     | Yes     | Yes     |
-| Android   | Yes     | Yes     | Yes     | Yes     | N/A     |
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
+| :-        | :-      | :-      | :-      | :-      | :-      | :-           |
+| macOS     | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
+| iOS       | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
+| Android   | Yes     | Yes     | Yes     | Yes     | N/A     | - -          |
 
-### Progressive Web Application
+### Progressive Web Application (HTTPS required, except localhost)
 
 A progressive web app (PWA) is an app that's built using web platform technologies, but that provides a user experience like that of a platform-specific app. You can read more about Progressive Web Apps in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
 
-| Platform  | Brave | Chrome | Edge | Firefox | Safari |
-| :-        | :-    | :-     | :-   | :-      | :-     |
-| macOS     | Yes   | Yes    | Yes  | No      | No     |
-| iOS       | No    | No     | No   | No      | Yes    |
-| Android   | Yes   | Yes    | Yes  | Yes     | N/A    |
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
+| :-        | :-      | :-      | :-      | :-      | :-      | :-           |
+| macOS     | Yes ¹   | Yes ¹   | Yes ¹   | No      | No      | **¹** can be installed from `Install PWA` button at right of address bar or `Options > Install app` button. |
+| iOS       | No      | No      | No      | No      | Yes ¹   | **¹** can be installed from `Share > Add to Home Screen` button. |
+| Android   | Yes ¹   | Yes ¹   | Yes ¹   | Yes ²   | N/A     | **¹** can be installed from `Add to Home Screen` popup or `Options > Install app` button. <br />**²** can be installed from `Options > Add to Home screen` button. |
 
 ## Credits
 
