@@ -1,4 +1,5 @@
 import react from '@vitejs/plugin-react';
+import fs from 'fs';
 import { defineConfig, loadEnv } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
@@ -98,6 +99,10 @@ export default defineConfig(({ mode }) => {
     // Local server configuration.
     server: {
       host: true,
+      https: {
+        cert: fs.readFileSync('certs/cert.pem'),
+        key: fs.readFileSync('certs/key.pem'),
+      },
     },
   };
 });
