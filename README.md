@@ -14,7 +14,7 @@ Apex Legends Map Rotation was born from an effort to be able to know what map is
 - Foreground notifications — _background notifications are on the way!_
   - Customizable maps
   - Customizable threshold
-- Installable application (see [support](#pwa-support))
+- Installable application (see [support](#progressive-web-application-1))
 
 ## Contribute
 
@@ -102,28 +102,6 @@ npm run deploy
 
 We use [Vite](https://vitejs.dev/) to run and build the application. Therefore, for setting up the Progressive Web Application, we use the [Vite PWA](https://vite-pwa-org.netlify.app/) plugin, which makes the configuration seamlessly.
 
-### PWA Support
-
-#### Desktop Support
-
-| Brave | Chrome | Edge | Firefox | Safari |
-| :-    | :-     | :-   | :-      | :-     |
-| Yes   | Yes    | Yes  | No      | No     |
-
-> Chromebooks, Linux, macOS, Windows
-
-#### iOS Support
-
-| Brave | Chrome | Edge | Firefox | Safari |
-| :-    | :-     | :-   | :-      | :-     |
-| No    | No     | No   | No      | Yes    |
-
-#### Android Support
-
-| Brave | Chrome | Edge | Firefox | Safari |
-| :-    | :-     | :-   | :-      | :-     |
-| Yes   | Yes    | Yes  | Yes     | N/A    |
-
 ### PWA Assets generation
 
 For generating the minimal PWA assets needed, we use [Vite PWA Assets Generator](https://vite-pwa-org.netlify.app/assets-generator/). The command below will generate the assets based on the file `public/logo.svg` using the configuration from [pwa-assets.config.ts](pwa-assets.config.ts). Make sure it's been updated before running it:
@@ -163,6 +141,62 @@ If you're still facing issues you can update the service worker yourself by pres
 #### Update assets
 
 When updating PWA assets, you might not be able to see the new assets loaded. If that's the case, please make sure to re-install the application.
+
+## Cross-browser Compatibility (using HTTP only)
+
+### Notifications
+
+We use the Notification interface of the Notifications API to configure and display desktop notifications to the user. You can read more about the Notifications API in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/notification).
+
+### Notification API
+
+> Checking API support through `'Notification' in window`.
+
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
+| :-        | :-      | :-      | :-      | :-      | :-      | :-           |
+| macOS     | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
+| iOS       | No      | No      | No      | No      | Yes     | - -          |
+| Android   | Yes     | Yes     | Yes     | Yes     | N/A     | - -          |
+
+#### Prompt Notification Permission
+
+> Asking for Notification Permissions through `Notification.requestPermission()` using `Promises`.
+
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
+| :-        | :-      | :-      | :-      | :-      | :-      | :-           |
+| macOS     | Yes¹    | Yes¹    | Yes¹    | Yes     | Yes²    | **¹** may require additional manual steps to grant permission. <br />**²** `Notification.permission` value is always `'default'` for Safari when using HTTP. |
+| iOS       | N/A     | N/A     | N/A     | N/A     | No¹     | **¹** `Notification.permission` is always `'denied'` for Safari when using HTTP. |
+| Android   | No¹     | No¹     | No¹     | No²     | N/A     | **¹** `Notification.permission` value is always `'denied'` for Chromium-based browsers when using HTTP. <br />**²** `Notification.permission` value is always `'default'` for Firefox when using HTTP. |
+
+### Send Notifications
+
+> Creating a new Notification instance using `new Notification(title, options);`
+
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  | Observations |
+| :-        | :-      | :-      | :-      | :-      | :-      | :-           |
+| macOS     | Yes     | Yes     | Yes     | Yes     | Yes     | - -          |
+| iOS       | N/A     | N/A     | N/A     | N/A     | TBD¹    | **¹** To be determined |
+| Android   | TBD¹    | TBD¹    | TBD¹    | TBD¹    | N/A     | **¹** To be determined |
+
+### Service Workers
+
+Service workers essentially act as proxy servers that sit between web applications, the browser, and the network (when available). You can read more about the Service Worker API in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API).
+
+| Platform  | Brave   | Chrome  | Edge    | Firefox | Safari  |
+| :-        | :-      | :-      | :-      | :-      | :-      |
+| macOS     | Yes     | Yes     | Yes     | Yes     | Yes     |
+| iOS       | Yes     | Yes     | Yes     | Yes     | Yes     |
+| Android   | Yes     | Yes     | Yes     | Yes     | N/A     |
+
+### Progressive Web Application
+
+A progressive web app (PWA) is an app that's built using web platform technologies, but that provides a user experience like that of a platform-specific app. You can read more about Progressive Web Apps in [MDN Web Docs](https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps).
+
+| Platform  | Brave | Chrome | Edge | Firefox | Safari |
+| :-        | :-    | :-     | :-   | :-      | :-     |
+| macOS     | Yes   | Yes    | Yes  | No      | No     |
+| iOS       | No    | No     | No   | No      | Yes    |
+| Android   | Yes   | Yes    | Yes  | Yes     | N/A    |
 
 ## Credits
 
