@@ -5,16 +5,21 @@ import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+// Used for Vite's base url as well as Workbox's modify url prefix.
+const getBaseUrl = (mode: string) =>
+  mode === 'production' ? '/apex-map-rotation/' : '/';
+
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const withEnvironment = (value: string) =>
     value.concat(mode === 'development' ? ' (DEV)' : '');
 
   const env = loadEnv(mode, process.cwd(), 'VITE_');
+  const baseUrl = getBaseUrl(mode);
 
   return {
-    // Changes base url depending on the build mode.
-    base: mode === 'production' ? '/apex-map-rotation/' : '/',
+    // Set base url depending on the build mode.
+    base: baseUrl,
 
     // Simplifies the process of creating a PWA/Service Worker enabled app.
     plugins: [
@@ -80,8 +85,13 @@ export default defineConfig(({ mode }) => {
 
         // Workbox options.
         workbox: {
-          // Includes .ico, .png, and .svg files
+          // Includes .ico, .png, and .svg files.
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+
+          // Append base url for files precache.
+          modifyURLPrefix: {
+            '': baseUrl,
+          },
         },
       }),
 
