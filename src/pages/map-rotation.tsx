@@ -1,58 +1,76 @@
 import Map from 'components/map';
 import Spinner from 'components/spinner';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
-import { getMapRotation } from 'lib/api';
-import { getDiffToNow } from 'lib/datetime';
+import { getDate } from 'lib/datetime';
+import { useCallback, useEffect, useState } from 'react';
 import useSWR from 'swr';
-import type MapType from 'types/map';
 import type MapRotation from 'types/map-rotation';
+import type SeasonMapSchedule from 'types/season-map-schedule';
 import type Settings from 'types/settings';
+
+interface MapRotationViewProps {
+  mapRotation: MapRotation;
+  onCurrentMapEnd: () => void;
+  settings: Settings;
+}
+
+function MapRotationView({
+  mapRotation: { current, next },
+  onCurrentMapEnd,
+  settings,
+}: MapRotationViewProps) {
+  useScheduledMapNotification({
+    enabled: settings.notifications.maps.includes(next.code),
+    map: next,
+    threshold: settings.notifications.threshold,
+  });
+
+  return (
+    <div className="flex-grow grid grid-rows-2">
+      <Map current map={current} onEnd={onCurrentMapEnd} />
+      <Map map={next} />
+    </div>
+  );
+}
 
 interface MapRotationPageProps {
   settings: Settings;
 }
 
 export default function MapRotationPage({ settings }: MapRotationPageProps) {
-  const { data, error, isLoading, isValidating, mutate } = useSWR<MapRotation>(
-    import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT,
-    {
-      /**
-       * We prefer manual retry over automatic retry. SWR will retry (revalidate)
-       * the data on focus if `revalidateOnFocus` is enabled.
-       */
-      errorRetryCount: 0,
+  const [mapRotation, setMapRotation] = useState<MapRotation | undefined>();
 
-      /**
-       * Use custom fetcher to parse api data.
-       */
-      fetcher: getMapRotation,
+  const { data, error, isLoading, isValidating, mutate } =
+    useSWR<SeasonMapSchedule>(
+      import.meta.env.VITE_APEX_LEGENDS_SEASON_MAP_SCHEDULE
+    );
 
-      /**
-       * Refresh data when the current map finishes.
-       *
-       * There's a known issue with the Apex Legends API that returns invalid
-       * data if requested in the exact same instant as the map changes.
-       *
-       * Therefore, instead of sending the request right on time, we delay it
-       * for a second.
-       */
-      refreshInterval: (data) =>
-        data ? getDiffToNow(data.current.end) + 1000 : 0,
+  const updateMapRotation = useCallback(() => {
+    if (data) {
+      const index = data.findIndex(
+        ({ end, start }) => getDate(start).isBefore() && getDate(end).isAfter()
+      );
 
-      /**
-       * Enable refresh when window is not visible.
-       */
-      refreshWhenHidden: true,
+      setMapRotation({
+        current: data[index],
+        next: data[index + 1],
+      });
+    } else {
+      setMapRotation(undefined);
     }
-  );
+  }, [data]);
+
+  useEffect(() => {
+    updateMapRotation();
+  }, [updateMapRotation]);
 
   return (
-    <>
+    <div className="flex-grow flex flex-col">
       {isLoading ? (
         <div className="flex-grow flex items-center justify-center">
           <Spinner />
         </div>
-      ) : !data || error ? (
+      ) : !mapRotation || error ? (
         <div className="p-8 flex-grow flex flex-col items-center justify-center gap-4">
           <div className="text-black text-base text-center font-light">
             An unexpected error occurred while loading the map rotation
@@ -67,8 +85,8 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
       ) : (
         <div className="relative flex-grow flex flex-col">
           <MapRotationView
-            current={data.current}
-            next={data.next}
+            mapRotation={mapRotation}
+            onCurrentMapEnd={updateMapRotation}
             settings={settings}
           />
 
@@ -79,27 +97,6 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
           )}
         </div>
       )}
-    </>
-  );
-}
-
-interface MapRotationViewProps {
-  current: MapType;
-  next: MapType;
-  settings: Settings;
-}
-
-function MapRotationView({ current, next, settings }: MapRotationViewProps) {
-  useScheduledMapNotification({
-    enabled: settings.notifications.maps.includes(next.code),
-    map: next,
-    threshold: settings.notifications.threshold,
-  });
-
-  return (
-    <div className="flex-grow grid grid-rows-2">
-      <Map current map={current} />
-      <Map map={next} />
     </div>
   );
 }

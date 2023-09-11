@@ -38,11 +38,13 @@ const MapImage: Record<MapCode, string> = Object.freeze({
 export interface MapProps {
   current?: boolean;
   map: MapType;
+  onEnd?: () => void;
 }
 
 export default function Map({
   current = false,
   map: { code, end, start },
+  onEnd,
 }: MapProps) {
   const [hasEnded, setHasEnded] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
@@ -135,6 +137,9 @@ export default function Map({
                   }
                   if (timeRemaining <= HAS_ENDED_THRESHOLD && !hasEnded) {
                     setHasEnded(true);
+                  }
+                  if (timeRemaining === 0) {
+                    onEnd?.();
                   }
                 }}
                 to={end}

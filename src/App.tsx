@@ -47,9 +47,7 @@ export default function App() {
       </div>
 
       {/* Pages */}
-      <div className="flex-grow flex flex-col">
-        <MapRotationPage settings={settings} />
-      </div>
+      <MapRotationPage settings={settings} />
 
       {/* Modals */}
       <SettingsModal
