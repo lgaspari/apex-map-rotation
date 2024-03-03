@@ -2,6 +2,9 @@
 dist
 dist-ssr
 
+# pwa
+dev-dist
+
 # coverage directory used by tools like istanbul
 coverage
 *.lcov

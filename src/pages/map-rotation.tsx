@@ -1,11 +1,11 @@
 import Map from 'components/map';
 import Spinner from 'components/spinner';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
-import { getMapRotation } from 'lib/api';
+import { getMapRotationPerMode } from 'lib/api';
 import { getDiffToNow } from 'lib/datetime';
 import useSWR from 'swr';
 import type MapType from 'types/map';
-import type MapRotation from 'types/map-rotation';
+import type { MapRotationPerMode } from 'types/map-rotation';
 import type Settings from 'types/settings';
 
 interface MapRotationPageProps {
@@ -13,38 +13,39 @@ interface MapRotationPageProps {
 }
 
 export default function MapRotationPage({ settings }: MapRotationPageProps) {
-  const { data, error, isLoading, isValidating, mutate } = useSWR<MapRotation>(
-    import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT,
-    {
-      /**
-       * We prefer manual retry over automatic retry. SWR will retry (revalidate)
-       * the data on focus if `revalidateOnFocus` is enabled.
-       */
-      errorRetryCount: 0,
+  const { data, error, isLoading, isValidating, mutate } =
+    useSWR<MapRotationPerMode>(
+      import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT,
+      {
+        /**
+         * We prefer manual retry over automatic retry. SWR will retry (revalidate)
+         * the data on focus if `revalidateOnFocus` is enabled.
+         */
+        errorRetryCount: 0,
 
-      /**
-       * Use custom fetcher to parse api data.
-       */
-      fetcher: getMapRotation,
+        /**
+         * Use custom fetcher to parse api data.
+         */
+        fetcher: getMapRotationPerMode,
 
-      /**
-       * Refresh data when the current map finishes.
-       *
-       * There's a known issue with the Apex Legends API that returns invalid
-       * data if requested in the exact same instant as the map changes.
-       *
-       * Therefore, instead of sending the request right on time, we delay it
-       * for a second.
-       */
-      refreshInterval: (data) =>
-        data ? getDiffToNow(data.current.end) + 1000 : 0,
+        /**
+         * Refresh data when the current map finishes.
+         *
+         * There's a known issue with the Apex Legends API that returns invalid
+         * data if requested in the exact same instant as the map changes.
+         *
+         * Therefore, instead of sending the request right on time, we delay it
+         * for a second.
+         */
+        refreshInterval: (data) =>
+          data ? getDiffToNow(data.pubs.current.end) : 0,
 
-      /**
-       * Enable refresh when window is not visible.
-       */
-      refreshWhenHidden: true,
-    }
-  );
+        /**
+         * Enable refresh when window is not visible.
+         */
+        refreshWhenHidden: true,
+      }
+    );
 
   return (
     <>
@@ -67,8 +68,8 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
       ) : (
         <div className="relative flex-grow flex flex-col">
           <MapRotationView
-            current={data.current}
-            next={data.next}
+            current={data.pubs.current}
+            next={data.pubs.next}
             settings={settings}
           />
 
