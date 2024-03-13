@@ -38,7 +38,7 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
          * for a second.
          */
         refreshInterval: (data) =>
-          data ? getDiffToNow(data.pubs.current.end) : 0,
+          data ? getDiffToNow(data.pubs.current.end) + 1000 : 0,
 
         /**
          * Enable refresh when window is not visible.
