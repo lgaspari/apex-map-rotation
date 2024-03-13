@@ -22,7 +22,13 @@ export const IS_ENDING_THRESHOLD = 15 * 60 * 1000; // 15 minutes
 /**
  * Formats date into readable schedule format.
  */
-const formatMapSchedule = (date: ISOString) => format(getDate(date), 'HH:mm');
+const formatMapSchedule = ({
+  date,
+  isRankedGameMode,
+}: {
+  date: ISOString;
+  isRankedGameMode: boolean;
+}) => format(getDate(date), `${isRankedGameMode ? 'ddd DD, ' : ''}HH:mm`);
 
 /**
  * Map background images mapping.
@@ -37,11 +43,13 @@ const MapImage: Record<MapCode, string> = Object.freeze({
 
 export interface MapProps {
   current?: boolean;
+  isRankedGameMode?: boolean;
   map: MapType;
 }
 
 export default function Map({
   current = false,
+  isRankedGameMode = false,
   map: { code, end, start },
 }: MapProps) {
   const [hasEnded, setHasEnded] = useState(false);
@@ -109,11 +117,11 @@ export default function Map({
           <div className="text-gray-300 text-base" data-testid="map-schedule">
             From{' '}
             <span className="text-white font-semibold">
-              {formatMapSchedule(start)}
+              {formatMapSchedule({ date: start, isRankedGameMode })}
             </span>{' '}
             to{' '}
             <span className="text-white font-semibold">
-              {formatMapSchedule(end)}
+              {formatMapSchedule({ date: end, isRankedGameMode })}
             </span>
           </div>
         </div>

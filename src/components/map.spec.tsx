@@ -19,8 +19,14 @@ const mockMap = (props: Partial<MapType> = {}): MapType => {
   };
 };
 
-function setup({ current, map = mockMap() }: Partial<MapProps>) {
-  return render(<Map current={current} map={map} />);
+function setup({
+  current,
+  isRankedGameMode,
+  map = mockMap(),
+}: Partial<MapProps>) {
+  return render(
+    <Map current={current} isRankedGameMode={isRankedGameMode} map={map} />
+  );
 }
 
 beforeEach(() => {
@@ -89,6 +95,18 @@ test('can display next map', () => {
 
   expect(screen.queryByText('Time remaining')).not.toBeInTheDocument();
   expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+});
+
+test('can display map for ranked mode', () => {
+  const map = mockMap({
+    start: getDate(systemDateTime).add(-1, 'day').toISOString(),
+  });
+
+  setup({ isRankedGameMode: true, map });
+
+  expect(screen.getByTestId('map-schedule')).toHaveTextContent(
+    'From Sat 29, 16:00 to Sun 30, 16:00'
+  );
 });
 
 describe('Maps', () => {
