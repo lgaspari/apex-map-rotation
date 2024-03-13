@@ -1,2 +1,2 @@
-export { ReactComponent as CloseIcon } from './close.svg';
-export { ReactComponent as SettingsIcon } from './settings.svg';
+export { default as CloseIcon } from './close.svg?react';
+export { default as SettingsIcon } from './settings.svg?react';
