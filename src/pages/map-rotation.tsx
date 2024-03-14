@@ -94,7 +94,8 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
           )}
 
           <button
-            className={`absolute top-[50%] translate-y-[-50%] w-[72px] right-0 border-2 border-r-0 border-[#17435c] ${
+            // Added class `mt-6` to compensate half the header size (class `h-12`).
+            className={`mt-6 fixed top-[50%] translate-y-[-50%] w-[72px] right-0 border-2 border-r-0 border-[#17435c] ${
               isRankedGameMode ? 'bg-[#0b1b24]' : 'bg-neutral-200'
             } p-2 rounded-s-lg flex flex-col items-center gap-1`}
             onClick={() =>
