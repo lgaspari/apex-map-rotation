@@ -103,6 +103,7 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
             }
           >
             <img
+              alt=""
               {...(!isRankedGameMode ? { className: 'grayscale' } : {})}
               src={ApexPredatorLogo}
               width={48}
