@@ -33,11 +33,11 @@ export default function Dialog({
          *
          * @todo remove `max-w-sm` class in favor of a better mechanism.
          */
-        className="max-w-sm p-4 rounded-md bg-[#121212] border-2 border-apex border-solid shadow-md shadow-black"
+        className="max-w-sm p-4 rounded-md bg-[#161616] border-2 border-apex border-solid shadow-md shadow-black"
         role="dialog"
       >
-        <div className="flex flex-row items-center justify-between gap-2 mb-2 text-white">
-          <div className="text-base font-semibold">{title}</div>
+        <div className="flex flex-row items-center justify-between gap-2 mb-4 text-white">
+          <div className="text-base font-tt-lakes-w05-medium">{title}</div>
           <button className="rounded-sm" onClick={onClose} title="Close">
             <CloseIcon className="w-4 h-4" />
           </button>
@@ -66,7 +66,7 @@ Dialog.CancelButton = function CancelButton({
 }) {
   return (
     <button
-      className="px-4 py-1 rounded-md text-base text-black font-normal bg-white"
+      className="px-4 py-1 rounded-md text-base text-black font-tt-lakes-w05-regular font-normal bg-white"
       onClick={onClick}
     >
       {children}
@@ -83,7 +83,7 @@ Dialog.ConfirmButton = function ConfirmButton({
 }) {
   return (
     <button
-      className="px-4 py-1 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
+      className="px-4 py-1 rounded-md text-base text-white font-tt-lakes-w05-regular font-normal bg-apex focus:outline-apex"
       onClick={onClick}
     >
       {children}
@@ -100,7 +100,7 @@ Dialog.OptionalButton = function OptionalButton({
 }) {
   return (
     <button
-      className="px-2 py-1 rounded-md text-gray-400 text-xs font-normal"
+      className="px-2 py-1 rounded-md text-xs text-gray-400 font-tt-lakes-w05-regular font-normal"
       onClick={onClick}
     >
       {children}
@@ -113,7 +113,9 @@ Dialog.Content = function DialogContent({
 }: {
   children: React.ReactNode;
 }) {
-  return <div className="text-gray-200 text-sm">{children}</div>;
+  return (
+    <div className="text-white text-sm font-tt-lakes-w05-light">{children}</div>
+  );
 };
 
 Dialog.Transition = function DialogTransition({

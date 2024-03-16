@@ -53,7 +53,15 @@ export default function TimeRemaining({
     return () => clearInterval(interval);
   }, [to]);
 
-  return (
-    <div role="timer">{format(getDuration(timeRemaining), 'HH:mm:ss')}</div>
-  );
+  const duration = getDuration(timeRemaining);
+
+  const timerFormat = (() => {
+    const hours = duration.hours() > 0 ? 'H[h] ' : '';
+    const minutes = duration.minutes() > 0 ? 'm[m] ' : '';
+    const seconds = 's[s]';
+
+    return `${hours}${minutes}${seconds}`;
+  })();
+
+  return <div role="timer">{format(duration, timerFormat)}</div>;
 }

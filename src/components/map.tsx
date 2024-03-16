@@ -5,6 +5,7 @@ import StormPoint from 'assets/maps/storm_point.png';
 import WorldsEdge from 'assets/maps/worlds_edge.png';
 import TimeRemaining from 'components/time-remaining';
 import { MapCode, MapName } from 'constants/map';
+import { ClockIcon } from 'icons';
 import { format, getDate } from 'lib/datetime';
 import { useEffect, useState } from 'react';
 import type MapType from 'types/map';
@@ -99,55 +100,52 @@ export default function Map({
         <div className="max-w-lg w-[100%] flex flex-col gap-2">
           {/* Badge */}
           <span
-            className={`self-start p-1 rounded-sm text-xs font-bold uppercase ${
-              current
-                ? 'bg-apex text-white'
-                : 'border-l-4 border-l-gray-400 text-gray-400'
+            className={`self-start p-1 border border-white border-opacity-10 rounded-sm shadow-md text-white text-sm font-tt-lakes-w05-regular uppercase ${
+              current ? 'bg-apex' : 'bg-gray-600'
             }`}
           >
-            {current ? 'Current map' : 'Next map'}
+            {current ? 'Live' : 'Upcoming'}
           </span>
 
           {/* Name */}
-          <div className="text-white text-4xl sm:text-6xl font-extrabold">
+          <div className="text-white text-7xl sm:text-8xl font-duke-fill uppercase">
             {MapName[code]}
           </div>
 
           {/* Schedule */}
-          <div className="text-gray-300 text-base" data-testid="map-schedule">
+          <div
+            className="text-gray-300 text-base font-tt-lakes-w05-light"
+            data-testid="map-schedule"
+          >
             From{' '}
-            <span className="text-white font-semibold">
+            <span className="text-white font-tt-lakes-w05-medium">
               {formatMapSchedule({ date: start, isRankedGameMode })}
             </span>{' '}
             to{' '}
-            <span className="text-white font-semibold">
+            <span className="text-white font-tt-lakes-w05-medium">
               {formatMapSchedule({ date: end, isRankedGameMode })}
             </span>
           </div>
         </div>
 
         {current && (
-          <div>
-            <div className="text-gray-300 text-center font-semibold whitespace-nowrap uppercase">
-              Time remaining
-            </div>
-            <div
-              className={`text-white text-3xl text-center font-bold ${
-                isEnding ? 'animate-pulse' : ''
-              }`}
-            >
-              <TimeRemaining
-                onTimeRemaining={(timeRemaining) => {
-                  if (timeRemaining <= IS_ENDING_THRESHOLD && !isEnding) {
-                    setIsEnding(true);
-                  }
-                  if (timeRemaining <= HAS_ENDED_THRESHOLD && !hasEnded) {
-                    setHasEnded(true);
-                  }
-                }}
-                to={end}
-              />
-            </div>
+          <div
+            className={`inline-flex items-center gap-1 font-tt-lakes-w05-regular text-yellow-500 text-3xl sm:text-center ${
+              isEnding ? 'animate-pulse' : ''
+            }`}
+          >
+            <ClockIcon className="h-8 w-8" />
+            <TimeRemaining
+              onTimeRemaining={(timeRemaining) => {
+                if (timeRemaining <= IS_ENDING_THRESHOLD && !isEnding) {
+                  setIsEnding(true);
+                }
+                if (timeRemaining <= HAS_ENDED_THRESHOLD && !hasEnded) {
+                  setHasEnded(true);
+                }
+              }}
+              to={end}
+            />
           </div>
         )}
       </div>

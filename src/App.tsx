@@ -7,7 +7,7 @@ import { Threshold } from 'constants/threshold';
 import useLocalStorage from 'hooks/use-local-storage';
 import { SettingsIcon } from 'icons';
 import MapRotationPage from 'pages/map-rotation';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type Settings from 'types/settings';
 
 export default function App() {
@@ -23,6 +23,10 @@ export default function App() {
       },
     }
   );
+
+  useEffect(() => {
+    document.body.style.overflowY = openedSettingsModal ? 'hidden' : 'auto';
+  }, [openedSettingsModal]);
 
   const setNotificationsSettings = useCallback(
     (partialNotifications: Partial<Settings['notifications']>) =>
@@ -40,23 +44,15 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <div className="sticky z-10 top-0 left-0 right-0 h-12 p-2 flex justify-between items-center bg-apex drop-shadow-lg">
-        <div className="w-16 flex items-center justify-start">
-          <img alt="Apex Legends Logo" height={32} src={ApexLogo} width={48} />
-        </div>
+        <img alt="" height={32} src={ApexLogo} width={48} />
 
-        <div className="text-white text-lg text-center font-bold uppercase leading-tight sm:leading-normal">
-          Map Rotation
-        </div>
-
-        <div className="w-16 flex items-center justify-end">
-          <button
-            className="rounded-sm text-white"
-            onClick={() => setOpenedSettingsModal(true)}
-            title="Settings"
-          >
-            <SettingsIcon />
-          </button>
-        </div>
+        <button
+          className="rounded-sm text-white"
+          onClick={() => setOpenedSettingsModal(true)}
+          title="Settings"
+        >
+          <SettingsIcon />
+        </button>
       </div>
 
       {/* Pages */}

@@ -68,11 +68,11 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
         </div>
       ) : !data || error ? (
         <div className="p-8 flex-grow flex flex-col items-center justify-center gap-4">
-          <div className="text-black text-base text-center font-light">
+          <div className="text-black text-base text-center font-tt-lakes-w05-medium">
             An unexpected error occurred while loading the map rotation
           </div>
           <button
-            className="px-8 py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
+            className="px-8 py-2 rounded-md text-base text-white font-tt-lakes-w05-regular font-normal bg-apex focus:outline-apex"
             onClick={() => mutate(undefined)}
           >
             Retry
@@ -104,12 +104,13 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
           >
             <img
               alt=""
-              {...(!isRankedGameMode ? { className: 'grayscale' } : {})}
+              height={48}
               src={ApexPredatorLogo}
               width={48}
+              {...(!isRankedGameMode ? { className: 'grayscale' } : {})}
             />
             <span
-              className={`uppercase font-bold text-xs ${
+              className={`text-2xl font-duke-fill uppercase ${
                 isRankedGameMode ? 'text-white' : 'text-gray-800'
               }`}
             >

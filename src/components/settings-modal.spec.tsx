@@ -74,8 +74,6 @@ test('can close modal', async () => {
 
   const { user } = setup({ onClose });
 
-  expect(screen.getByText('Settings')).toBeInTheDocument();
-
   await user.click(screen.getByRole('button', { name: 'Discard' }));
   expect(onClose).toHaveBeenCalled();
 });

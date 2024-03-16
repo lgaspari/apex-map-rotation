@@ -66,74 +66,70 @@ export default function SettingsModal({
       data-testid="settings-modal-overlay"
     >
       <div
-        className={`max-w-md w-[100%] rounded-md bg-[#121212] border-2 border-apex border-solid shadow-lg shadow-black ${
+        className={`max-h-full overflow-y-auto max-w-md w-[100%] rounded-md bg-[#161616] border-2 border-apex border-solid shadow-lg shadow-black ${
           mounted ? 'scale-100' : 'scale-50'
         } transition-transform duration-500`}
       >
-        <h2 className="p-6 text-3xl text-white font-bold">Settings</h2>
+        <h2 className="p-6 text-2xl text-white font-tt-lakes-w05-medium">
+          Notifications
+        </h2>
 
-        <div className="px-6 py-6 text-gray-200 border-y border-gray-800 border-solid">
-          <h3 className="mb-4 text-xl text-white font-bold">Notifications</h3>
+        <div className="p-6 font-tt-lakes-w05-regular text-gray-200 border-y border-gray-800 border-solid">
+          {/* Threshold */}
+          <div className="mb-2 flex flex-row items-center gap-2">
+            <div className="font-tt-lakes-w05-medium">Threshold:</div>
+            <select
+              className="appearance-none text-center bg-transparent border-b-2 border-b-apex font-tt-lakes-w05-light"
+              name="threshold"
+              onChange={(e) => handleThresholdChange(Number(e.target.value))}
+              value={threshold}
+            >
+              {Object.entries(ThresholdLabel).map(([threshold, label]) => (
+                <option key={threshold} value={threshold}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </div>
 
+          {/* Maps */}
           <div>
-            {/* Threshold */}
-            <div className="mb-2 flex flex-row items-center gap-2">
-              <div className="font-light">Threshold:</div>
-              <select
-                className="appearance-none text-center bg-transparent border-b-2 border-b-apex"
-                name="threshold"
-                onChange={(e) => handleThresholdChange(Number(e.target.value))}
-                value={threshold}
-              >
-                {Object.entries(ThresholdLabel).map(([threshold, label]) => (
-                  <option key={threshold} value={threshold}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Maps */}
-            <div>
-              <div className="mb-2 font-light">Maps:</div>
-              <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {(Object.entries(MapName) as Array<[MapCode, string]>).map(
-                  ([code, name]) => (
-                    <label
-                      className="w-fit flex items-center gap-2 hover:cursor-pointer"
-                      htmlFor={code}
-                      key={code}
-                    >
-                      <input
-                        checked={maps.includes(code)}
-                        className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
-                        id={code}
-                        name="maps"
-                        onChange={(e) =>
-                          handleMapChange(code, e.target.checked)
-                        }
-                        type="checkbox"
-                      />
-                      <span className="text-white text-base font-extralight">
-                        {name}
-                      </span>
-                    </label>
-                  )
-                )}
-              </div>
+            <div className="font-tt-lakes-w05-medium">Maps:</div>
+            <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {(Object.entries(MapName) as Array<[MapCode, string]>).map(
+                ([code, name]) => (
+                  <label
+                    className="w-fit flex items-center gap-2 hover:cursor-pointer"
+                    htmlFor={code}
+                    key={code}
+                  >
+                    <input
+                      checked={maps.includes(code)}
+                      className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
+                      id={code}
+                      name="maps"
+                      onChange={(e) => handleMapChange(code, e.target.checked)}
+                      type="checkbox"
+                    />
+                    <span className="text-white text-base font-tt-lakes-w05-light">
+                      {name}
+                    </span>
+                  </label>
+                )
+              )}
             </div>
           </div>
         </div>
 
         <div className="p-6 flex justify-end gap-2">
           <button
-            className="px-6 sm:px-8 py-2 rounded-md text-base text-black font-normal bg-white"
+            className="px-6 sm:px-8 py-2 rounded-md text-base text-black font-tt-lakes-w05-regular font-normal bg-white"
             onClick={onClose}
           >
             Discard
           </button>
           <button
-            className="px-6 sm:px-8 py-2 rounded-md text-base text-white font-normal bg-apex focus:outline-apex"
+            className="px-6 sm:px-8 py-2 rounded-md text-base text-white font-tt-lakes-w05-regular font-normal bg-apex focus:outline-apex"
             onClick={handleSave}
           >
             Save

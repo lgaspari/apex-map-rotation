@@ -44,11 +44,9 @@ afterEach(() => {
 test('can display current map', () => {
   setup({ current: true });
 
-  expect(screen.getByText('Current map')).toBeInTheDocument();
-  expect(screen.queryByText('Next map')).not.toBeInTheDocument();
-
-  expect(screen.getByText('Time remaining')).toBeInTheDocument();
-  expect(screen.getByRole('timer')).toHaveTextContent('00:00:00');
+  expect(screen.getByText('Live')).toBeInTheDocument();
+  expect(screen.queryByText('Upcoming')).not.toBeInTheDocument();
+  expect(screen.getByRole('timer')).toHaveTextContent('0s');
 });
 
 test('should turn "is ending" state when passing the threshold for the current map', () => {
@@ -90,10 +88,8 @@ test('should turn "has ended" state when passing the threshold for the current m
 test('can display next map', () => {
   setup({ current: false });
 
-  expect(screen.getByText('Next map')).toBeInTheDocument();
-  expect(screen.queryByText('Current map')).not.toBeInTheDocument();
-
-  expect(screen.queryByText('Time remaining')).not.toBeInTheDocument();
+  expect(screen.getByText('Upcoming')).toBeInTheDocument();
+  expect(screen.queryByText('Live')).not.toBeInTheDocument();
   expect(screen.queryByRole('timer')).not.toBeInTheDocument();
 });
 

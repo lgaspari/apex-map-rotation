@@ -37,39 +37,39 @@ afterEach(() => {
 test('should display remaining time', () => {
   const { timer } = setup({ to: '2019-06-30T16:34:01Z' });
 
-  expect(timer).toHaveTextContent('00:34:01');
+  expect(timer).toHaveTextContent('34m 1s');
 });
 
 test('should update remaining time after one second', () => {
   const { timer } = setup({ to: '2019-06-30T16:09:59Z' });
 
-  expect(timer).toHaveTextContent('00:09:59');
+  expect(timer).toHaveTextContent('9m 59s');
   act(() => {
     jest.advanceTimersByTime(1000);
   });
-  expect(timer).toHaveTextContent('00:09:58');
+  expect(timer).toHaveTextContent('9m 58s');
 });
 
 test('should update remaining time when `to` prop changes', () => {
   const { rerender, timer } = setup();
 
-  expect(timer).toHaveTextContent('00:00:00');
+  expect(timer).toHaveTextContent('0s');
   rerender({ to: '2019-06-30T18:30:00Z' });
-  expect(timer).toHaveTextContent('02:30:00');
+  expect(timer).toHaveTextContent('2h 30m 0s');
 });
 
 test('should stop timer if completed', () => {
   const { timer } = setup({ to: '2019-06-30T16:00:10Z' });
 
-  expect(timer).toHaveTextContent('00:00:10');
+  expect(timer).toHaveTextContent('10s');
   act(() => {
     jest.advanceTimersByTime(10000);
   });
-  expect(timer).toHaveTextContent('00:00:00');
+  expect(timer).toHaveTextContent('0s');
   act(() => {
     jest.advanceTimersByTime(1000);
   });
-  expect(timer).toHaveTextContent('00:00:00');
+  expect(timer).toHaveTextContent('0s');
 });
 
 test('should trigger `onTimeRemaining` callback every second', () => {
@@ -113,10 +113,10 @@ test('should trigger updated `onTimeRemaining` callback', () => {
 test('should not display negative values if re-rendered past time', () => {
   const { rerender, timer } = setup();
 
-  expect(timer).toHaveTextContent('00:00:00');
+  expect(timer).toHaveTextContent('0s');
   act(() => {
     jest.advanceTimersByTime(1000);
   });
   rerender();
-  expect(timer).toHaveTextContent('00:00:00');
+  expect(timer).toHaveTextContent('0s');
 });
