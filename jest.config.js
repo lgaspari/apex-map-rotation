@@ -179,7 +179,7 @@ export default {
   // A map from regular expressions to paths to transformers
   transform: {
     '\\.[jt]sx?$': 'babel-jest',
-    '\\.(png)$': '<rootDir>/jest.file.transformer.ts',
+    '\\.(webp)$': '<rootDir>/jest.file.transformer.ts',
   },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation

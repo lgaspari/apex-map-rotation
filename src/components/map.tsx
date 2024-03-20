@@ -1,8 +1,8 @@
-import BrokenMoon from 'assets/maps/broken_moon.png';
-import KingsCanyon from 'assets/maps/kings_canyon.png';
-import Olympus from 'assets/maps/olympus.png';
-import StormPoint from 'assets/maps/storm_point.png';
-import WorldsEdge from 'assets/maps/worlds_edge.png';
+import BrokenMoon from 'assets/maps/broken_moon.webp';
+import KingsCanyon from 'assets/maps/kings_canyon.webp';
+import Olympus from 'assets/maps/olympus.webp';
+import StormPoint from 'assets/maps/storm_point.webp';
+import WorldsEdge from 'assets/maps/worlds_edge.webp';
 import TimeRemaining from 'components/time-remaining';
 import { MapCode, MapName } from 'constants/map';
 import { ClockIcon } from 'icons';
