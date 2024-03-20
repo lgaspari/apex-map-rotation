@@ -7,7 +7,7 @@ import { Threshold } from 'constants/threshold';
 import useLocalStorage from 'hooks/use-local-storage';
 import { SettingsIcon } from 'icons';
 import MapRotationPage from 'pages/map-rotation';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type Settings from 'types/settings';
 
 export default function App() {
@@ -18,9 +18,22 @@ export default function App() {
     {
       notifications: {
         maps: Object.values(MapCode),
+        prompt: true,
         threshold: Threshold.FIFTEEN_MINUTES,
       },
     }
+  );
+
+  const setNotificationsSettings = useCallback(
+    (partialNotifications: Partial<Settings['notifications']>) =>
+      setSettings((settings) => ({
+        ...settings,
+        notifications: {
+          ...settings.notifications,
+          ...partialNotifications,
+        },
+      })),
+    [setSettings]
   );
 
   return (
@@ -59,8 +72,13 @@ export default function App() {
         settings={settings}
       />
 
-      {/* Prompts */}
-      <NotificationsPrompt />
+      {/* Notifications Prompts */}
+      <NotificationsPrompt
+        notificationsSettings={settings.notifications}
+        setNotificationsSettings={setNotificationsSettings}
+      />
+
+      {/* PWA Prompts */}
       <PWAUpdatePrompt />
     </div>
   );

@@ -32,8 +32,16 @@ export default function useLocalStorage<T>(key: string, initialValue: T) {
   const setStorageValue: Dispatch<SetStateAction<T>> = useCallback(
     (value) => {
       try {
-        localStorage.setItem(key, JSON.stringify(value));
-        setValue(value);
+        if (value instanceof Function) {
+          setValue((prevValue) => {
+            const result = value(prevValue);
+            localStorage.setItem(key, JSON.stringify(result));
+            return result;
+          });
+        } else {
+          localStorage.setItem(key, JSON.stringify(value));
+          setValue(value);
+        }
       } catch {
         // If user is in private mode or has storage restriction
         // localStorage can throw. Also JSON.stringify can throw.

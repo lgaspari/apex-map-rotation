@@ -91,6 +91,23 @@ Dialog.ConfirmButton = function ConfirmButton({
   );
 };
 
+Dialog.OptionalButton = function OptionalButton({
+  children,
+  onClick,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      className="px-2 py-1 rounded-md text-gray-400 text-xs font-normal"
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+};
+
 Dialog.Content = function DialogContent({
   children,
 }: {

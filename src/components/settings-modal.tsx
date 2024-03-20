@@ -1,4 +1,4 @@
-import { MapName } from 'constants/map';
+import { MapName, type MapCode } from 'constants/map';
 import { ThresholdLabel } from 'constants/threshold';
 import { useEffect, useState } from 'react';
 import type Settings from 'types/settings';
@@ -29,7 +29,7 @@ export default function SettingsModal({
     }
   }, [opened, settings]);
 
-  const handleMapChange = (code: string, checked: boolean) => {
+  const handleMapChange = (code: MapCode, checked: boolean) => {
     setDraftSettings(
       ({ notifications: { maps, ...notifications }, ...draftSettings }) => ({
         ...draftSettings,
@@ -97,25 +97,29 @@ export default function SettingsModal({
             <div>
               <div className="mb-2 font-light">Maps:</div>
               <div className="px-4 grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {Object.entries(MapName).map(([code, name]) => (
-                  <label
-                    className="w-fit flex items-center gap-2 hover:cursor-pointer"
-                    htmlFor={code}
-                    key={code}
-                  >
-                    <input
-                      checked={maps.includes(code)}
-                      className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
-                      id={code}
-                      name="maps"
-                      onChange={(e) => handleMapChange(code, e.target.checked)}
-                      type="checkbox"
-                    />
-                    <span className="text-white text-base font-extralight">
-                      {name}
-                    </span>
-                  </label>
-                ))}
+                {(Object.entries(MapName) as Array<[MapCode, string]>).map(
+                  ([code, name]) => (
+                    <label
+                      className="w-fit flex items-center gap-2 hover:cursor-pointer"
+                      htmlFor={code}
+                      key={code}
+                    >
+                      <input
+                        checked={maps.includes(code)}
+                        className="h-4 w-4 appearance-none rounded-sm bg-white checked:bg-apex border border-solid border-gray-200"
+                        id={code}
+                        name="maps"
+                        onChange={(e) =>
+                          handleMapChange(code, e.target.checked)
+                        }
+                        type="checkbox"
+                      />
+                      <span className="text-white text-base font-extralight">
+                        {name}
+                      </span>
+                    </label>
+                  )
+                )}
               </div>
             </div>
           </div>

@@ -4,130 +4,238 @@ import {
   waitForElementToBeRemoved,
 } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { MapCode } from 'constants/map';
+import { Threshold } from 'constants/threshold';
 import {
   isNotificationAPISupported,
   requestNotificationPermission,
   sendNotification,
   shouldPromptNotificationPermission,
 } from 'lib/notifications';
-import NotificationsPrompt from './notifications-prompt';
+import NotificationsPrompt, {
+  type NotificationsPromptProps,
+} from './notifications-prompt';
 
 jest.mock('lib/notifications');
 
-function setup() {
+const defaultSettings: NotificationsPromptProps['notificationsSettings'] = {
+  maps: Object.values(MapCode),
+  prompt: true,
+  threshold: Threshold.FIFTEEN_MINUTES,
+};
+
+function setup(props: Partial<NotificationsPromptProps> = {}) {
+  const defaultProps: NotificationsPromptProps = {
+    notificationsSettings: defaultSettings,
+    setNotificationsSettings: jest.fn(),
+  };
+
   const user = userEvent.setup();
 
-  const utils = render(<NotificationsPrompt />);
+  const utils = render(<NotificationsPrompt {...defaultProps} {...props} />);
 
   return {
     ...utils,
+    defaultProps,
     user,
   };
 }
 
-test('should not prompt notification permission if supported and granted or denied', async () => {
-  (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
-  (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(false);
+describe('Supported', () => {
+  test('should not prompt notification permission if supported and granted or denied', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(false);
 
-  setup();
+    setup();
 
-  expect(
-    screen.queryByRole('dialog', {
-      name: '🔕 Disabled map notifications',
-    })
-  ).not.toBeInTheDocument();
-  expect(
-    screen.queryByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
-  ).not.toBeInTheDocument();
-});
+    expect(
+      screen.queryByRole('dialog', {
+        name: '🔕 Disabled map notifications',
+      })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', {
+        name: "🔔 Hey, don't miss your favorite map!",
+      })
+    ).not.toBeInTheDocument();
+  });
 
-test('should prompt notification permission if supported and permission is default', async () => {
-  (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
-  (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
+  test('should not prompt notification permission if setting is false', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
 
-  const { user } = setup();
+    setup({
+      notificationsSettings: {
+        ...defaultSettings,
+        prompt: false,
+      },
+    });
 
-  expect(
-    screen.getByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      'Would you like to receive map change notifications from us?'
-    )
-  ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', {
+        name: '🔕 Disabled map notifications',
+      })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('dialog', {
+        name: "🔔 Hey, don't miss your favorite map!",
+      })
+    ).not.toBeInTheDocument();
+  });
 
-  await user.click(screen.getByRole('button', { name: 'Not now' }));
+  test('can prevent from showing prompt again', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
-  );
-});
+    const { defaultProps, user } = setup();
 
-test('should request notification permission if user consents', async () => {
-  (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
-  (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
-  (requestNotificationPermission as jest.Mock).mockResolvedValueOnce('default');
+    await user.click(screen.getByRole('button', { name: "Don't show again" }));
 
-  const { user } = setup();
+    expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
+      prompt: false,
+    });
 
-  await user.click(screen.getByRole('button', { name: 'Yes' }));
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: "🔔 Hey, don't miss your favorite map!",
+        }),
+      { timeout: 2000 }
+    );
+  });
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
-  );
+  test('should prompt notification permission if supported and permission is default', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
 
-  expect(requestNotificationPermission).toHaveBeenCalled();
-});
+    const { user } = setup({
+      notificationsSettings: {
+        ...defaultSettings,
+        prompt: undefined, // should work the same as `true`
+      },
+    });
 
-test('should send dummy notification if user grants permission', async () => {
-  (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
-  (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
-  (requestNotificationPermission as jest.Mock).mockResolvedValueOnce('granted');
+    expect(
+      screen.getByRole('dialog', {
+        name: "🔔 Hey, don't miss your favorite map!",
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Would you like to receive map change notifications from us?'
+      )
+    ).toBeInTheDocument();
 
-  const { user } = setup();
+    await user.click(screen.getByRole('button', { name: 'Not now' }));
 
-  await user.click(screen.getByRole('button', { name: 'Yes' }));
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: "🔔 Hey, don't miss your favorite map!",
+        }),
+      { timeout: 2000 }
+    );
+  });
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: "🔔 Hey, don't miss your favorite map!",
-    })
-  );
+  test('should request notification permission if user consents', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (requestNotificationPermission as jest.Mock).mockResolvedValueOnce(
+      'default'
+    );
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
 
-  expect(sendNotification).toHaveBeenCalledWith({
-    title: 'Notifications enabled',
+    const { defaultProps, user } = setup();
+
+    await user.click(screen.getByRole('button', { name: 'Yes' }));
+
+    expect(requestNotificationPermission).toHaveBeenCalled();
+    expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
+      prompt: false,
+    });
+
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: "🔔 Hey, don't miss your favorite map!",
+        }),
+      { timeout: 2000 }
+    );
+  });
+
+  test('should send dummy notification if user grants permission', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(true);
+    (requestNotificationPermission as jest.Mock).mockResolvedValueOnce(
+      'granted'
+    );
+    (shouldPromptNotificationPermission as jest.Mock).mockReturnValue(true);
+
+    const { defaultProps, user } = setup();
+
+    await user.click(screen.getByRole('button', { name: 'Yes' }));
+
+    expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
+      prompt: false,
+    });
+
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: "🔔 Hey, don't miss your favorite map!",
+        }),
+      { timeout: 2000 }
+    );
+
+    expect(sendNotification).toHaveBeenCalledWith({
+      title: 'Notifications enabled',
+    });
   });
 });
 
-test('should announce disabled notifications if not supported', async () => {
-  (isNotificationAPISupported as jest.Mock).mockReturnValue(false);
+describe('Not Supported', () => {
+  test('should announce disabled notifications if not supported', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(false);
 
-  const { user } = setup();
+    const { user } = setup();
 
-  expect(
-    screen.getByRole('dialog', {
-      name: '🔕 Disabled map notifications',
-    })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      "Looks like notifications aren't supported in your browser, sorry!"
-    )
-  ).toBeInTheDocument();
+    expect(
+      screen.getByRole('dialog', {
+        name: '🔕 Disabled map notifications',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Looks like notifications aren't supported in your browser, sorry!"
+      )
+    ).toBeInTheDocument();
 
-  await user.click(screen.getByRole('button', { name: 'Understood' }));
+    await user.click(screen.getByRole('button', { name: 'Understood' }));
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: '🔕 Disabled map notifications',
-    })
-  );
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: '🔕 Disabled map notifications',
+        }),
+      { timeout: 2000 }
+    );
+  });
+
+  test('can prevent from showing prompt again', async () => {
+    (isNotificationAPISupported as jest.Mock).mockReturnValue(false);
+
+    const { defaultProps, user } = setup();
+
+    await user.click(screen.getByRole('button', { name: "Don't show again" }));
+
+    expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
+      prompt: false,
+    });
+
+    await waitForElementToBeRemoved(
+      () =>
+        screen.queryByRole('dialog', {
+          name: '🔕 Disabled map notifications',
+        }),
+      { timeout: 2000 }
+    );
+  });
 });
