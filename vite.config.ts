@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   const baseUrl = getBaseUrl(mode);
 
+  const isPwaEnabled = env.VITE_PWA_ENABLED === 'true';
+
   return {
     // Set base url depending on the build mode.
     base: baseUrl,
@@ -26,11 +28,11 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         // Enable PWA while in development mode.
         devOptions: {
-          enabled: true,
+          enabled: isPwaEnabled,
         },
 
         // Disable PWA based on environment variable
-        disable: env.VITE_PWA_ENABLED !== 'true',
+        disable: !isPwaEnabled,
 
         // Public resources, no need to include manifest assets.
         includeAssets: ['robots.txt'],
@@ -109,10 +111,14 @@ export default defineConfig(({ mode }) => {
     // Local server configuration.
     server: {
       host: true,
-      https: {
-        cert: fs.readFileSync('certs/cert.pem'),
-        key: fs.readFileSync('certs/key.pem'),
-      },
+      ...(isPwaEnabled
+        ? {
+            https: {
+              cert: fs.readFileSync('certs/cert.pem'),
+              key: fs.readFileSync('certs/key.pem'),
+            },
+          }
+        : {}),
     },
   };
 });
