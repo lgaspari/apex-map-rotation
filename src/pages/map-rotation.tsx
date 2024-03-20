@@ -1,4 +1,4 @@
-import ApexPredatorLogo from 'assets/apex-predator-logo.webp';
+import ApexPredatorLogo from 'assets/apex-predator-logo.svg';
 import Map from 'components/map';
 import Spinner from 'components/spinner';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
