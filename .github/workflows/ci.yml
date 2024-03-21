@@ -1,10 +1,14 @@
 name: 'CI'
 
 on:
+  # Triggers workflow on pull request events
   pull_request:
+  # Triggers workflow on push events to the `main` branch
   push:
     branches:
       - main
+  # Enables this workflow to be triggered manually
+  workflow_dispatch:
 
 # This allows a subsequently queued workflow run to interrupt previous runs
 concurrency:

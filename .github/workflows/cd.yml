@@ -1,0 +1,45 @@
+name: 'CD'
+
+on:
+  # Triggers workflow on push events to every tag starting with `v` (for version) not containing /
+  push:
+    tags:
+      - v*
+  # Enables this workflow to be triggered manually
+  workflow_dispatch:
+
+# This allows a subsequently queued workflow run to interrupt previous runs
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.ref_name }}'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.15.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        env:
+          VITE_APEX_LEGENDS_API_SECRET_TOKEN: ${{ secrets.VITE_APEX_LEGENDS_API_SECRET_TOKEN }}
+          VITE_PWA_ENABLED: ${{ vars.VITE_PWA_ENABLED }}
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          full_commit_message: ${{ github.ref_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
