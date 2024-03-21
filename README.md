@@ -44,7 +44,7 @@ npm install
 
 Make a copy of the `.env` file into `.env.local`. Fill empty environment variables with their proper value as the following:
 
-- `VITE_APEX_LEGENDS_API_SECRET_TOKEN`: Unofficial Apex Legends API secret token for authentication
+- `VITE_APEX_LEGENDS_API_SECRET_TOKEN`: [Unofficial Apex Legends API](https://apexlegendsapi.com/) secret token for authentication
 
 ### Start application in Development mode
 
