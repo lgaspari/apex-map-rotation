@@ -42,11 +42,11 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
         /**
          * Refresh data when the current map finishes.
          *
-         * There's a known issue with the Apex Legends API that returns invalid
-         * data if requested in the exact same instant as the map changes.
+         * There's an issue with the Apex Legends API that returns invalid data
+         * if requested in the exact same instant as the map changes. Therefore,
+         * instead of sending the request right on time, we delay it for a second.
          *
-         * Therefore, instead of sending the request right on time, we delay it
-         * for a second.
+         * Otherwise, we disable the refresh interval by returning zero.
          */
         refreshInterval: (data) =>
           data ? getDiffToNow(data[gameMode].current.end) + 1000 : 0,
@@ -55,6 +55,12 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
          * Enable refresh when window is not visible.
          */
         refreshWhenHidden: true,
+
+        /**
+         * Disable revalidate on focus in favor of refresh interval, plus
+         * reduce API calls.
+         */
+        revalidateOnFocus: false,
       }
     );
 
