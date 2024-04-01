@@ -1,4 +1,3 @@
-import ApexLogo from 'assets/apex-logo.svg';
 import NotificationsPrompt from 'components/notifications-prompt';
 import PWAUpdatePrompt from 'components/pwa-update-prompt';
 import SettingsModal from 'components/settings-modal';
@@ -44,7 +43,12 @@ export default function App() {
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <div className="sticky z-10 top-0 left-0 right-0 h-12 p-2 flex justify-between items-center bg-apex drop-shadow-lg">
-        <img alt="" height={32} src={ApexLogo} width={48} />
+        <img
+          alt=""
+          height={32}
+          src={`${import.meta.env.BASE_URL}assets/apex-logo.svg`}
+          width={48}
+        />
 
         <button
           className="rounded-sm text-white"

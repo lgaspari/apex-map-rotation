@@ -1,8 +1,3 @@
-import BrokenMoon from 'assets/maps/broken_moon.webp';
-import KingsCanyon from 'assets/maps/kings_canyon.webp';
-import Olympus from 'assets/maps/olympus.webp';
-import StormPoint from 'assets/maps/storm_point.webp';
-import WorldsEdge from 'assets/maps/worlds_edge.webp';
 import TimeRemaining from 'components/time-remaining';
 import { MapCode, MapName } from 'constants/map';
 import { ClockIcon } from 'icons';
@@ -31,16 +26,16 @@ const formatMapSchedule = ({
   isRankedGameMode: boolean;
 }) => format(getDate(date), `${isRankedGameMode ? 'ddd DD, ' : ''}HH:mm`);
 
-/**
- * Map background images mapping.
- */
-const MapImage: Record<MapCode, string> = Object.freeze({
-  [MapCode.BrokenMoon]: BrokenMoon,
-  [MapCode.KingsCanyon]: KingsCanyon,
-  [MapCode.Olympus]: Olympus,
-  [MapCode.StormPoint]: StormPoint,
-  [MapCode.WorldsEdge]: WorldsEdge,
-});
+const MapImage = Object.freeze(
+  Object.values(MapCode).reduce(
+    (acc, code) => ({
+      ...acc,
+      [code]: `${import.meta.env.BASE_URL}assets/maps/${code}.webp`,
+    }),
+    // hack to prevent typing all object keys
+    {} as Record<MapCode, string>
+  )
+);
 
 export interface MapProps {
   current?: boolean;

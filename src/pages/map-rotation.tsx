@@ -1,4 +1,3 @@
-import ApexPredatorLogo from 'assets/apex-predator-logo.svg';
 import Map from 'components/map';
 import Spinner from 'components/spinner';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
@@ -106,7 +105,7 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
             <img
               alt=""
               height={48}
-              src={ApexPredatorLogo}
+              src={`${import.meta.env.BASE_URL}assets/apex-predator-logo.svg`}
               width={48}
               {...(!isRankedGameMode ? { className: 'grayscale' } : {})}
             />
