@@ -4,31 +4,31 @@
 @font-face {
   font-family: 'Duke_Fill';
   font-display: swap;
-  src: url('fonts/Duke_Fill.woff') format('woff');
+  src: url('/fonts/Duke_Fill.woff') format('woff');
 }
 
 @font-face {
   font-family: 'TT_Lakes_W05_Light';
   font-display: swap;
   src:
-    url('fonts/TT_Lakes_W05_Light.woff') format('woff2'),
-    url('fonts/TT_Lakes_W05_Light.woff') format('woff');
+    url('/fonts/TT_Lakes_W05_Light.woff') format('woff2'),
+    url('/fonts/TT_Lakes_W05_Light.woff') format('woff');
 }
 
 @font-face {
   font-family: 'TT_Lakes_W05_Regular';
   font-display: swap;
   src:
-    url('fonts/TT_Lakes_W05_Regular.woff') format('woff2'),
-    url('fonts/TT_Lakes_W05_Regular.woff') format('woff');
+    url('/fonts/TT_Lakes_W05_Regular.woff') format('woff2'),
+    url('/fonts/TT_Lakes_W05_Regular.woff') format('woff');
 }
 
 @font-face {
   font-family: 'TT_Lakes_W05_Medium';
   font-display: swap;
   src:
-    url('fonts/TT_Lakes_W05_Medium.woff') format('woff2'),
-    url('fonts/TT_Lakes_W05_Medium.woff') format('woff');
+    url('/fonts/TT_Lakes_W05_Medium.woff') format('woff2'),
+    url('/fonts/TT_Lakes_W05_Medium.woff') format('woff');
 }
 
 @layer base {
