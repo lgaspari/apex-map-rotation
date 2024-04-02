@@ -87,8 +87,8 @@ export default defineConfig(({ mode }) => {
 
         // Workbox options.
         workbox: {
-          // Includes .ico, .png, and .svg files.
-          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          // Includes .ico, .png, .svg, and .webp image files, as well as .woff and .woff2 font files.
+          globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2 }'],
 
           // Append base url for files precache.
           modifyURLPrefix: {
