@@ -1,5 +1,5 @@
 import { act, render, screen } from '@testing-library/react';
-import { MapCode, MapName } from 'constants/map';
+import { MapCode, MapImage, MapName } from 'constants/map';
 import { getDate } from 'lib/datetime';
 import type MapType from 'types/map';
 import Map, {
@@ -14,6 +14,8 @@ const mockMap = (props: Partial<MapType> = {}): MapType => {
   return {
     code: MapCode.BrokenMoon,
     end: new Date().toISOString(),
+    image: MapImage.broken_moon,
+    name: MapName.broken_moon,
     start: new Date().toISOString(),
     ...props,
   };
@@ -106,21 +108,24 @@ test('can display map for ranked mode', () => {
 });
 
 describe('Maps', () => {
-  test.each(Object.values(MapCode).map((code) => [MapName[code], code]))(
-    'can display %s map',
-    (name, code) => {
-      const map = mockMap({
-        code,
-        end: '2019-06-30T16:30:00Z',
-        start: '2019-06-30T15:30:00Z',
-      });
+  test.each(
+    Object.values(MapCode).map((code) => [
+      { code, image: MapImage[code], name: MapName[code] },
+    ])
+  )('can display %s map', ({ code, image, name }) => {
+    const map = mockMap({
+      code,
+      end: '2019-06-30T16:30:00Z',
+      image,
+      name,
+      start: '2019-06-30T15:30:00Z',
+    });
 
-      setup({ map });
+    setup({ map });
 
-      expect(screen.getByText(name)).toBeInTheDocument();
-      expect(screen.getByTestId('map-schedule')).toHaveTextContent(
-        'From 15:30 to 16:30'
-      );
-    }
-  );
+    expect(screen.getByText(name)).toBeInTheDocument();
+    expect(screen.getByTestId('map-schedule')).toHaveTextContent(
+      'From 15:30 to 16:30'
+    );
+  });
 });

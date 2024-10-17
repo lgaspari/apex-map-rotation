@@ -1,5 +1,4 @@
 import TimeRemaining from 'components/time-remaining';
-import { MapCode, MapName } from 'constants/map';
 import { ClockIcon } from 'icons';
 import { format, getDate } from 'lib/datetime';
 import { useEffect, useState } from 'react';
@@ -26,17 +25,6 @@ const formatMapSchedule = ({
   isRankedGameMode: boolean;
 }) => format(getDate(date), `${isRankedGameMode ? 'ddd DD, ' : ''}HH:mm`);
 
-const MapImage = Object.freeze(
-  Object.values(MapCode).reduce(
-    (acc, code) => ({
-      ...acc,
-      [code]: `${import.meta.env.BASE_URL}assets/maps/${code}.webp`,
-    }),
-    // hack to prevent typing all object keys
-    {} as Record<MapCode, string>
-  )
-);
-
 export interface MapProps {
   current?: boolean;
   isRankedGameMode?: boolean;
@@ -46,7 +34,7 @@ export interface MapProps {
 export default function Map({
   current = false,
   isRankedGameMode = false,
-  map: { code, end, start },
+  map: { code, end, image, name, start },
 }: MapProps) {
   const [hasEnded, setHasEnded] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
@@ -71,7 +59,7 @@ export default function Map({
       }`}
       style={
         {
-          '--background-image': `url('${MapImage[code]}')`,
+          '--background-image': `url('${image}')`,
         } as React.CSSProperties
       }
       {...(current
@@ -104,7 +92,7 @@ export default function Map({
 
           {/* Name */}
           <div className="text-white text-7xl sm:text-8xl font-duke-fill uppercase">
-            {MapName[code]}
+            {name}
           </div>
 
           {/* Schedule */}

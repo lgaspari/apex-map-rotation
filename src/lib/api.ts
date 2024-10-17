@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { MapCode } from 'constants/map';
+import { MapCode, MapImage, MapName } from 'constants/map';
 import { getDateFromUnix } from 'lib/datetime';
 import type Map from 'types/map';
 import type { MapRotation, MapRotationPerMode } from 'types/map-rotation';
@@ -73,15 +73,19 @@ const MapCodeMapping: Record<keyof typeof ExternalMapCode, MapCode> =
     worlds_edge_rotation: MapCode.WorldsEdge,
   });
 
-const parseExternalMapResponse = ({
-  code,
-  end,
-  start,
-}: ExternalMapResponse): Map => ({
-  code: MapCodeMapping[code],
-  end: getDateFromUnix(end).toISOString(),
-  start: getDateFromUnix(start).toISOString(),
-});
+const parseExternalMapResponse = (external: ExternalMapResponse): Map => {
+  const code: MapCode | undefined = MapCodeMapping[external.code];
+
+  return {
+    code,
+    end: getDateFromUnix(external.end).toISOString(),
+    start: getDateFromUnix(external.start).toISOString(),
+    // If internal code exists, we use internal asset, otherwise we rely on external asset.
+    image: code ? MapImage[code] : external.asset,
+    // If internal code exists, we use internal name, otherwise we rely on external name.
+    name: code ? MapName[code] : external.map,
+  };
+};
 
 const parseExternalMapRotationResponse = ({
   current,
