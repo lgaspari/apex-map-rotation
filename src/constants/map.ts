@@ -1,5 +1,6 @@
 export enum MapCode {
   BrokenMoon = 'broken_moon',
+  EDistrict = 'edistrict',
   KingsCanyon = 'kings_canyon',
   Olympus = 'olympus',
   StormPoint = 'storm_point',
@@ -19,6 +20,7 @@ export const MapImage = Object.freeze(
 
 export const MapName: Record<MapCode, string> = Object.freeze({
   [MapCode.BrokenMoon]: 'Broken Moon',
+  [MapCode.EDistrict]: 'E-District',
   [MapCode.KingsCanyon]: 'Kings Canyon',
   [MapCode.Olympus]: 'Olympus',
   [MapCode.StormPoint]: 'Storm Point',

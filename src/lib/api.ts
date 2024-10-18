@@ -19,10 +19,11 @@ const apexLegendsApi = axios.create({
 });
 
 /**
- * Mapping date: 6/27/23
+ * Mapping date: 18/10/24
  */
 enum ExternalMapCode {
   broken_moon_rotation,
+  edistrict_rotation,
   kings_canyon_rotation,
   olympus_rotation,
   storm_point_rotation,
@@ -67,6 +68,7 @@ type ExternalMapRotationPerModeResponse =
 const MapCodeMapping: Record<keyof typeof ExternalMapCode, MapCode> =
   Object.freeze({
     broken_moon_rotation: MapCode.BrokenMoon,
+    edistrict_rotation: MapCode.EDistrict,
     kings_canyon_rotation: MapCode.KingsCanyon,
     olympus_rotation: MapCode.Olympus,
     storm_point_rotation: MapCode.StormPoint,
