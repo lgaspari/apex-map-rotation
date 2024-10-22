@@ -15,7 +15,12 @@
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
-    "types": ["@testing-library/jest-dom", "jest", "vite/client", "vite-plugin-pwa/react", "vite-plugin-svgr/client"],
+    "types": [
+      "@vitest/browser/providers/playwright",
+      "vite/client",
+      "vite-plugin-pwa/react",
+      "vite-plugin-svgr/client"
+    ],
     "useDefineForClassFields": true
   },
   "include": ["src"],

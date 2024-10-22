@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { expect, test, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
 import Dialog, { type DialogProps } from './dialog';
 
 function setup({
@@ -9,40 +9,40 @@ function setup({
   opened = true,
   title = 'Dialog title',
 }: Partial<DialogProps> = {}) {
-  const user = userEvent.setup();
-
-  const utils = render(
+  const screen = render(
     <Dialog onClose={onClose} opened={opened} title={title}>
       {children}
     </Dialog>
   );
 
-  return {
-    ...utils,
-    user,
-  };
+  return { screen };
 }
 
 test('has correct accessibility', async () => {
-  setup({ title: 'My dialog' });
-  expect(screen.getByRole('dialog', { name: 'My dialog' })).toBeInTheDocument();
+  const { screen } = setup({ title: 'My dialog' });
+
+  await expect
+    .element(screen.getByRole('dialog', { name: 'My dialog' }))
+    .toBeInTheDocument();
 });
 
 test('can close dialog', async () => {
-  const onClose = jest.fn();
+  const onClose = vi.fn();
 
-  const { user } = setup({ onClose });
+  const { screen } = setup({ onClose });
 
-  await user.click(screen.getByRole('button', { name: 'Close' }));
+  await screen.getByRole('button', { name: 'Close' }).click();
   expect(onClose).toHaveBeenCalled();
 });
 
 test('can display title', async () => {
-  setup({ title: 'Custom title' });
-  expect(screen.getByText('Custom title')).toBeInTheDocument();
+  const { screen } = setup({ title: 'Custom title' });
+
+  await expect.element(screen.getByText('Custom title')).toBeInTheDocument();
 });
 
 test('can display content', async () => {
-  setup({ children: <div>Custom content</div> });
-  expect(screen.getByText('Custom content')).toBeInTheDocument();
+  const { screen } = setup({ children: <div>Custom content</div> });
+
+  await expect.element(screen.getByText('Custom content')).toBeInTheDocument();
 });

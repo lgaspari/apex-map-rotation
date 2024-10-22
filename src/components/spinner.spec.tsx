@@ -1,26 +1,29 @@
-import { render } from '@testing-library/react';
+import { expect, test } from 'vitest';
+import { render } from 'vitest-browser-react';
 import Spinner, { type SpinnerProps } from './spinner';
 
 function setup({ size }: SpinnerProps = {}) {
-  const utils = render(<Spinner size={size} />);
+  const screen = render(<Spinner size={size} />);
 
   return {
-    ...utils,
-    spinner: utils.getByRole('status'),
+    spinner: screen.getByRole('status'),
   };
 }
 
-test('can display small spinner', () => {
+test('can display small spinner', async () => {
   const { spinner } = setup({ size: 'small' });
-  expect(spinner).toHaveClass('h-6 w-6 border-2');
+
+  await expect.element(spinner).toHaveClass('h-6 w-6 border-2');
 });
 
-test('can display large spinner', () => {
+test('can display large spinner', async () => {
   const { spinner } = setup({ size: 'large' });
-  expect(spinner).toHaveClass('h-12 w-12 border-4');
+
+  await expect.element(spinner).toHaveClass('h-12 w-12 border-4');
 });
 
-test('should announce status for screen readers', () => {
+test('should announce status for screen readers', async () => {
   const { spinner } = setup();
-  expect(spinner).toHaveTextContent('Loading...');
+
+  await expect.element(spinner).toHaveTextContent('Loading...');
 });

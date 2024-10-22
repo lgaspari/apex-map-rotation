@@ -1,5 +1,6 @@
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@vitest/browser/context';
+import { describe, expect, test, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
 import { MapCode, MapName } from 'constants/map';
 import { Threshold } from 'constants/threshold';
 import type SettingsType from 'types/settings';
@@ -36,9 +37,7 @@ function setup({
   setSettings = () => {},
   settings = mockSettings(),
 }: Partial<SettingsModalProps> = {}) {
-  const user = userEvent.setup();
-
-  const utils = render(
+  const screen = render(
     <SettingsModal
       onClose={onClose}
       opened={opened}
@@ -47,81 +46,85 @@ function setup({
     />
   );
 
-  return {
-    ...utils,
-    user,
-  };
+  return { screen };
 }
 
 function setupNotifications(props: Partial<SettingsModalProps> = {}) {
-  const utils = setup(props);
+  const { screen } = setup(props);
 
   return {
-    ...utils,
     getMapCheckbox: (code: MapCode) =>
-      utils.getByRole('checkbox', { name: MapName[code] }),
-    thresholdSelect: utils.getByRole('combobox'),
+      screen.getByRole('checkbox', { name: MapName[code] }),
+    screen,
+    thresholdSelect: screen.getByRole('combobox'),
   };
 }
 
 test('does not render modal if not opened', async () => {
-  setup({ opened: false });
-  expect(screen.queryByTestId('settings-modal-overlay')).toHaveClass('hidden');
+  const { screen } = setup({ opened: false });
+
+  await expect
+    .element(screen.getByTestId('settings-modal-overlay'))
+    .toHaveClass('hidden');
 });
 
 test('can close modal', async () => {
-  const onClose = jest.fn();
+  const onClose = vi.fn();
 
-  const { user } = setup({ onClose });
+  const { screen } = setup({ onClose });
 
-  await user.click(screen.getByRole('button', { name: 'Discard' }));
+  await screen.getByRole('button', { name: 'Discard' }).click();
   expect(onClose).toHaveBeenCalled();
 });
 
 describe('Notifications', () => {
-  test('can display notification settings', () => {
-    const { getMapCheckbox, thresholdSelect } = setupNotifications();
+  test('can display notification settings', async () => {
+    const { getMapCheckbox, screen, thresholdSelect } = setupNotifications();
 
-    expect(screen.getByText('Notifications')).toBeInTheDocument();
+    await expect.element(screen.getByText('Notifications')).toBeInTheDocument();
 
     // threshold
-    expect(screen.getByText('Threshold:')).toBeInTheDocument();
-    expect(thresholdSelect).toHaveValue(String(initialThreshold));
+    await expect.element(screen.getByText('Threshold:')).toBeInTheDocument();
+    await expect.element(thresholdSelect).toHaveValue(String(initialThreshold));
 
     // maps
-    expect(screen.getByText('Maps:')).toBeInTheDocument();
-    initialMaps.forEach((code) => {
-      expect(getMapCheckbox(code)).toBeChecked();
-    });
+    await expect.element(screen.getByText('Maps:')).toBeInTheDocument();
+    await Promise.all(
+      initialMaps.map((code) =>
+        expect.element(getMapCheckbox(code)).toBeChecked()
+      )
+    );
   });
 
   test('can update notification threshold preferences', async () => {
     const threshold = Threshold.FIVE_MINUTES;
     const notifications = mockNotifications({ threshold });
-    const onClose = jest.fn();
+    const onClose = vi.fn();
     const selectedThreshold = Threshold.SIXTY_MINUTES;
-    const setSettings = jest.fn();
+    const setSettings = vi.fn();
 
-    const { thresholdSelect, user } = setupNotifications({
+    const { thresholdSelect, screen } = setupNotifications({
       onClose,
       setSettings,
       settings: mockSettings({ notifications }),
     });
 
     // before
-    expect(thresholdSelect).toHaveValue(String(threshold));
+    await expect.element(thresholdSelect).toHaveValue(String(threshold));
 
     // change selection
-    await user.selectOptions(
-      thresholdSelect,
+    await userEvent.selectOptions(
+      thresholdSelect.element(),
       screen.getByRole('option', { name: '1 hour' })
     );
 
     // after
-    expect(thresholdSelect).toHaveValue(String(selectedThreshold));
+    await expect
+      .element(thresholdSelect)
+      .toHaveValue(String(selectedThreshold));
 
     // confirm changes
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await screen.getByRole('button', { name: 'Save' }).click();
     expect(setSettings).toHaveBeenCalledWith({
       notifications: {
         ...notifications,
@@ -134,40 +137,44 @@ describe('Notifications', () => {
   test('can update maps notification preferences', async () => {
     const maps = [MapCode.BrokenMoon, MapCode.Olympus, MapCode.WorldsEdge];
     const notifications = mockNotifications({ maps });
-    const onClose = jest.fn();
-    const setSettings = jest.fn();
+    const onClose = vi.fn();
+    const setSettings = vi.fn();
 
-    const { getMapCheckbox, user } = setupNotifications({
+    const { getMapCheckbox, screen } = setupNotifications({
       onClose,
       setSettings,
       settings: mockSettings({ notifications }),
     });
 
     // before
-    maps.forEach((code) => {
-      expect(getMapCheckbox(code)).toBeChecked();
-    });
+    await Promise.all(
+      maps.map((code) => expect.element(getMapCheckbox(code)).toBeChecked())
+    );
 
     // toggle selection
-    await user.click(getMapCheckbox(MapCode.BrokenMoon)); // unselect
-    await user.click(getMapCheckbox(MapCode.Olympus)); // unselect
-    await user.click(getMapCheckbox(MapCode.KingsCanyon)); // select
+    await getMapCheckbox(MapCode.BrokenMoon).click(); // unselect
+    await getMapCheckbox(MapCode.Olympus).click(); // unselect
+    await getMapCheckbox(MapCode.KingsCanyon).click(); // select
 
     // after
     const selectedMaps = [MapCode.WorldsEdge, MapCode.KingsCanyon];
-    selectedMaps.forEach((code) => {
-      expect(getMapCheckbox(code)).toBeChecked();
-    });
+    await Promise.all(
+      selectedMaps.map((code) =>
+        expect.element(getMapCheckbox(code)).toBeChecked()
+      )
+    );
 
     const unselectedMaps = initialMaps.filter(
       (code) => !selectedMaps.includes(code)
     );
-    unselectedMaps.forEach((code) => {
-      expect(getMapCheckbox(code)).not.toBeChecked();
-    });
+    await Promise.all(
+      unselectedMaps.map((code) =>
+        expect.element(getMapCheckbox(code)).not.toBeChecked()
+      )
+    );
 
     // confirm changes
-    await user.click(screen.getByRole('button', { name: 'Save' }));
+    await screen.getByRole('button', { name: 'Save' }).click();
     expect(setSettings).toHaveBeenCalledWith({
       notifications: {
         ...notifications,

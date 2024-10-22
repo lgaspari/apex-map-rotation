@@ -1,100 +1,104 @@
-import {
-  render,
-  screen,
-  waitForElementToBeRemoved,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { mockUpdateServiceWorker, mockUseRegisterSW } from 'mocks/pwa';
+import { waitForElementToBeRemoved } from '@testing-library/react';
+import { afterAll, expect, test, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
+import { updateServiceWorker, useRegisterSW } from 'mocks/pwa';
 import PWAUpdatePrompt from './pwa-update-prompt';
 
-jest.mock(
-  'virtual:pwa-register/react',
-  () => ({
-    useRegisterSW: mockUseRegisterSW,
-  }),
-  { virtual: true }
-);
+const consoleErrorMock = vi.spyOn(console, 'error');
+const consoleLogMock = vi.spyOn(console, 'log');
+
+afterAll(() => {
+  consoleErrorMock.mockReset();
+  consoleLogMock.mockReset();
+});
 
 function setup() {
-  const user = userEvent.setup();
+  const screen = render(<PWAUpdatePrompt />);
 
-  const utils = render(<PWAUpdatePrompt />);
-
-  return {
-    ...utils,
-    user,
-  };
+  return { screen };
 }
 
 test('can close prompt', async () => {
-  const { user } = setup();
+  const { screen } = setup();
 
-  await user.click(screen.getByRole('button', { name: 'Later' }));
+  await screen.getByRole('button', { name: 'Later' }).click();
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: '✨ New version available',
-    })
+  await waitForElementToBeRemoved(
+    () =>
+      screen
+        .getByRole('dialog', {
+          name: '✨ New version available',
+        })
+        .query(),
+    { timeout: 2000 }
   );
 });
 
 test('can reload page', async () => {
-  const { user } = setup();
+  const { screen } = setup();
 
-  expect(
-    screen.getByRole('dialog', {
-      name: '✨ New version available',
-    })
-  ).toBeInTheDocument();
-  expect(
-    screen.getByText(
-      'Please, click the reload button below to begin the update.'
+  await expect
+    .element(
+      screen.getByRole('dialog', {
+        name: '✨ New version available',
+      })
     )
-  ).toBeInTheDocument();
+    .toBeInTheDocument();
+  await expect
+    .element(
+      screen.getByText(
+        'Please, click the reload button below to begin the update.'
+      )
+    )
+    .toBeInTheDocument();
 
-  await user.click(screen.getByRole('button', { name: 'Reload' }));
+  await screen.getByRole('button', { name: 'Reload' }).click();
 
-  expect(mockUpdateServiceWorker).toHaveBeenCalledWith(true);
+  expect(updateServiceWorker).toHaveBeenCalledWith(true);
 
-  await waitForElementToBeRemoved(() =>
-    screen.queryByRole('dialog', {
-      name: '✨ New version available',
-    })
+  await waitForElementToBeRemoved(
+    () =>
+      screen
+        .getByRole('dialog', {
+          name: '✨ New version available',
+        })
+        .query(),
+    { timeout: 2000 }
   );
 });
 
 test('should log message if succeeded to register service worker', () => {
-  jest.spyOn(console, 'log').mockImplementationOnce(() => jest.fn());
+  consoleLogMock.mockImplementationOnce(() => vi.fn());
 
   const url = '/dev-sw.js?dev-sw';
-  mockUseRegisterSW.mockImplementationOnce(({ onRegisteredSW }) => {
+  useRegisterSW.mockImplementationOnce(({ onRegisteredSW }) => {
     onRegisteredSW?.(url);
 
     return {
-      needRefresh: [false, jest.fn()],
-      updateServiceWorker: mockUpdateServiceWorker,
+      needRefresh: [false, vi.fn()],
+      updateServiceWorker: vi.fn(),
     };
   });
 
   setup();
 
-  expect(console.log).toHaveBeenCalledWith('SW registered', url);
+  expect(consoleLogMock).toHaveBeenCalledWith('SW registered', url);
 });
 
-test('should log message if failed to register service worker', () => {
-  jest.spyOn(console, 'error').mockImplementationOnce(() => jest.fn());
+test('should log error message if failed to register service worker', () => {
+  consoleErrorMock.mockImplementationOnce(() => vi.fn());
 
   const error = { message: 'error' };
-  mockUseRegisterSW.mockImplementationOnce(({ onRegisterError }) => {
+  useRegisterSW.mockImplementationOnce(({ onRegisterError }) => {
     onRegisterError?.(error);
 
     return {
-      needRefresh: [false, jest.fn()],
-      updateServiceWorker: mockUpdateServiceWorker,
+      needRefresh: [false, vi.fn()],
+      updateServiceWorker: vi.fn(),
     };
   });
 
   setup();
 
-  expect(console.error).toHaveBeenCalledWith('SW registration error', error);
+  expect(consoleErrorMock).toHaveBeenCalledWith('SW registration error', error);
 });

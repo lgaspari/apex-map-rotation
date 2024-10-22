@@ -3,7 +3,7 @@
     "dbaeumer.vscode-eslint",
     "EditorConfig.EditorConfig",
     "esbenp.prettier-vscode",
-    "firsttris.vscode-jest-runner",
+    "vitest.explorer",
     "ryanluker.vscode-coverage-gutters"
   ]
 }

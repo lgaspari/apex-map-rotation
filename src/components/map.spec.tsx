@@ -1,4 +1,5 @@
-import { act, render, screen } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { render } from 'vitest-browser-react';
 import { MapCode, MapImage, MapName } from 'constants/map';
 import { getDate } from 'lib/datetime';
 import type MapType from 'types/map';
@@ -26,85 +27,81 @@ function setup({
   isRankedGameMode,
   map = mockMap(),
 }: Partial<MapProps>) {
-  return render(
+  const screen = render(
     <Map current={current} isRankedGameMode={isRankedGameMode} map={map} />
   );
+
+  return { screen };
 }
 
 beforeEach(() => {
-  jest.useFakeTimers();
-  jest.setSystemTime(new Date(systemDateTime));
+  vi.useFakeTimers();
+  vi.setSystemTime(new Date(systemDateTime));
 });
 
 afterEach(() => {
-  act(() => {
-    jest.runOnlyPendingTimers();
-  });
-  jest.useRealTimers();
+  vi.runOnlyPendingTimers();
+  vi.useRealTimers();
 });
 
-test('can display current map', () => {
-  setup({ current: true });
+test('can display current map', async () => {
+  const { screen } = setup({ current: true });
 
-  expect(screen.getByText('Live')).toBeInTheDocument();
-  expect(screen.queryByText('Upcoming')).not.toBeInTheDocument();
-  expect(screen.getByRole('timer')).toHaveTextContent('0s');
+  await expect.element(screen.getByText('Live')).toBeInTheDocument();
+  await expect.element(screen.getByText('Upcoming')).not.toBeInTheDocument();
+  await expect.element(screen.getByRole('timer')).toHaveTextContent('0s');
 });
 
-test('should turn "is ending" state when passing the threshold for the current map', () => {
+test('should turn "is ending" state when passing the threshold for the current map', async () => {
   const map = mockMap({
     end: getDate(systemDateTime)
       .add(IS_ENDING_THRESHOLD, 'milliseconds')
       .toISOString(),
   });
 
-  setup({ current: true, map });
+  const { screen } = setup({ current: true, map });
 
   const mapComponent = screen.getByTestId('map');
 
-  expect(mapComponent).toHaveAttribute('data-is-ending', 'false');
-  act(() => {
-    jest.advanceTimersByTime(1000);
-  });
-  expect(mapComponent).toHaveAttribute('data-is-ending', 'true');
+  await expect.element(mapComponent).toHaveAttribute('data-is-ending', 'false');
+  vi.advanceTimersByTime(1000);
+  await expect.element(mapComponent).toHaveAttribute('data-is-ending', 'true');
 });
 
-test('should turn "has ended" state when passing the threshold for the current map', () => {
+test('should turn "has ended" state when passing the threshold for the current map', async () => {
   const map = mockMap({
     end: getDate(systemDateTime)
       .add(HAS_ENDED_THRESHOLD, 'milliseconds')
       .toISOString(),
   });
 
-  setup({ current: true, map });
+  const { screen } = setup({ current: true, map });
 
   const mapComponent = screen.getByTestId('map');
 
-  expect(mapComponent).toHaveAttribute('data-has-ended', 'false');
-  act(() => {
-    jest.advanceTimersByTime(1000);
-  });
-  expect(mapComponent).toHaveAttribute('data-has-ended', 'true');
+  await expect.element(mapComponent).toHaveAttribute('data-has-ended', 'false');
+  vi.advanceTimersByTime(1000);
+  await expect.element(mapComponent).toHaveAttribute('data-has-ended', 'true');
 });
 
-test('can display next map', () => {
-  setup({ current: false });
+test('can display next map', async () => {
+  const { screen } = setup({ current: false });
 
-  expect(screen.getByText('Upcoming')).toBeInTheDocument();
-  expect(screen.queryByText('Live')).not.toBeInTheDocument();
-  expect(screen.queryByRole('timer')).not.toBeInTheDocument();
+  await expect.element(screen.getByText('Upcoming')).toBeInTheDocument();
+  await expect.element(screen.getByText('Live')).not.toBeInTheDocument();
+  await expect.element(screen.getByRole('timer')).not.toBeInTheDocument();
 });
 
-test('can display map for ranked mode', () => {
+test('can display map for ranked mode', async () => {
   const map = mockMap({
     start: getDate(systemDateTime).add(-1, 'day').toISOString(),
   });
 
-  setup({ isRankedGameMode: true, map });
+  const { screen } = setup({ isRankedGameMode: true, map });
 
-  expect(screen.getByTestId('map-schedule')).toHaveTextContent(
-    'From Sat 29, 16:00 to Sun 30, 16:00'
-  );
+  await expect
+    .element(screen.getByTestId('map-schedule'))
+    .toHaveTextContent('From Sat 29, 16:00 to Sun 30, 16:00');
 });
 
 describe('Maps', () => {
@@ -112,7 +109,7 @@ describe('Maps', () => {
     Object.values(MapCode).map((code) => [
       { code, image: MapImage[code], name: MapName[code] },
     ])
-  )('can display %s map', ({ code, image, name }) => {
+  )('can display %s map', async ({ code, image, name }) => {
     const map = mockMap({
       code,
       end: '2019-06-30T16:30:00Z',
@@ -121,11 +118,11 @@ describe('Maps', () => {
       start: '2019-06-30T15:30:00Z',
     });
 
-    setup({ map });
+    const { screen } = setup({ map });
 
-    expect(screen.getByText(name)).toBeInTheDocument();
-    expect(screen.getByTestId('map-schedule')).toHaveTextContent(
-      'From 15:30 to 16:30'
-    );
+    await expect.element(screen.getByText(name)).toBeInTheDocument();
+    await expect
+      .element(screen.getByTestId('map-schedule'))
+      .toHaveTextContent('From 15:30 to 16:30');
   });
 });

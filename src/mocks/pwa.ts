@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { vi } from 'vitest';
 
-export const mockUpdateServiceWorker = jest.fn();
+export const updateServiceWorker = vi.fn();
 
-export const mockUseRegisterSW = jest.fn(
+export const useRegisterSW = vi.fn(
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   (_: {
     onRegisteredSW?: (url: string) => void;
@@ -12,7 +13,7 @@ export const mockUseRegisterSW = jest.fn(
 
     return {
       needRefresh: [needRefresh, setNeedRefresh],
-      updateServiceWorker: mockUpdateServiceWorker,
+      updateServiceWorker,
     };
   }
 );

@@ -1,6 +1,9 @@
+/// <reference types="vitest/config" />
+
 import react from '@vitejs/plugin-react';
 import fs from 'fs';
 import { defineConfig, loadEnv } from 'vite';
+import { coverageConfigDefaults } from 'vitest/config';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -107,6 +110,25 @@ export default defineConfig(({ mode }) => {
       // Enables fast refresh and jsx runtime (no import React).
       react(),
     ],
+
+    // Vitest configuration.
+    test: {
+      alias: {
+        'virtual:pwa-register/react': 'mocks/pwa',
+      },
+      browser: {
+        enabled: true,
+        name: 'chromium',
+        provider: 'playwright',
+        providerOptions: {},
+      },
+      coverage: {
+        exclude: ['src/main.tsx', ...coverageConfigDefaults.exclude],
+        include: ['src/**/*'],
+        provider: 'istanbul',
+      },
+      dir: 'src',
+    },
 
     // Local server configuration.
     server: {

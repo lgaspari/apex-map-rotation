@@ -74,13 +74,13 @@ In addition, you may install [ESLint](https://marketplace.visualstudio.com/items
 
 ### Tests
 
-We use [Jest](https://jestjs.io/) as the testing framework for our application. Check your local tests by running the following command:
+We use [Vitest](https://vitest.dev/) as the testing framework for our application. Check your local tests by running the following command:
 
 ```bash
 npm run test
 ```
 
-In addition, you may install [Jest Runner](https://marketplace.visualstudio.com/items?itemName=firsttris.vscode-jest-runner) extension for Visual Studio Code to run tests quickly.
+In addition, you may install [Vitest](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) extension for Visual Studio Code to run tests quickly.
 
 ### Continuous Integration
 
