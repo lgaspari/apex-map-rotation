@@ -19,7 +19,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint"],
+  "plugins": ["react", "@typescript-eslint", "@vitest"],
   "rules": {
     // Avoid needing to specify a display name for components.
     "react/display-name": "off",
