@@ -105,7 +105,7 @@ export default function useScheduledMapNotification({
         notificationDelay > 0 ? notificationDelay : 0
       );
 
-      () => clearTimeout(timeout);
+      return () => clearTimeout(timeout);
     }
   }, [code, enabled, sent, start, threshold]);
 }

@@ -21,14 +21,13 @@ const apexLegendsApi = axios.create({
 /**
  * Mapping date: 18/10/24
  */
-enum ExternalMapCode {
-  broken_moon_rotation,
-  edistrict_rotation,
-  kings_canyon_rotation,
-  olympus_rotation,
-  storm_point_rotation,
-  worlds_edge_rotation,
-}
+type ExternalMapCode =
+  | 'broken_moon_rotation'
+  | 'edistrict_rotation'
+  | 'kings_canyon_rotation'
+  | 'olympus_rotation'
+  | 'storm_point_rotation'
+  | 'worlds_edge_rotation';
 
 /**
  * Mapping date: 3/12/24 (not all modes are considered)
@@ -37,7 +36,7 @@ interface ExternalMapResponse {
   DurationInMinutes: number;
   DurationInSecs: number;
   asset: string;
-  code: keyof typeof ExternalMapCode;
+  code: ExternalMapCode;
   end: number;
   map: string;
   readableDate_end: string;
@@ -65,15 +64,14 @@ type ExternalMapRotationPerModeResponse =
     }
   | [];
 
-const MapCodeMapping: Record<keyof typeof ExternalMapCode, MapCode> =
-  Object.freeze({
-    broken_moon_rotation: MapCode.BrokenMoon,
-    edistrict_rotation: MapCode.EDistrict,
-    kings_canyon_rotation: MapCode.KingsCanyon,
-    olympus_rotation: MapCode.Olympus,
-    storm_point_rotation: MapCode.StormPoint,
-    worlds_edge_rotation: MapCode.WorldsEdge,
-  });
+const MapCodeMapping: Record<ExternalMapCode, MapCode> = Object.freeze({
+  broken_moon_rotation: MapCode.BrokenMoon,
+  edistrict_rotation: MapCode.EDistrict,
+  kings_canyon_rotation: MapCode.KingsCanyon,
+  olympus_rotation: MapCode.Olympus,
+  storm_point_rotation: MapCode.StormPoint,
+  worlds_edge_rotation: MapCode.WorldsEdge,
+});
 
 const parseExternalMapResponse = (external: ExternalMapResponse): Map => {
   const code: MapCode | undefined = MapCodeMapping[external.code];
