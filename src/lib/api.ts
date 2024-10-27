@@ -21,7 +21,7 @@ const apexLegendsApi = axios.create({
 /**
  * Mapping date: 18/10/24
  */
-type ExternalMapCode =
+export type ExternalMapCode =
   | 'broken_moon_rotation'
   | 'edistrict_rotation'
   | 'kings_canyon_rotation'
@@ -32,7 +32,7 @@ type ExternalMapCode =
 /**
  * Mapping date: 3/12/24 (not all modes are considered)
  */
-interface ExternalMapResponse {
+export interface ExternalMapResponse {
   DurationInMinutes: number;
   DurationInSecs: number;
   asset: string;
@@ -57,9 +57,9 @@ export interface ExternalMapRotationResponse {
  * right when the map changes, it may return an empty array instead of the
  * proper response.
  */
-type ExternalMapRotationPerModeResponse =
+export type ExternalMapRotationPerModeResponse =
   | {
-      battle_royale: ExternalMapRotationResponse;
+      battle_royale?: ExternalMapRotationResponse;
       ranked: ExternalMapRotationResponse;
     }
   | [];
@@ -73,59 +73,58 @@ const MapCodeMapping: Record<ExternalMapCode, MapCode> = Object.freeze({
   worlds_edge_rotation: MapCode.WorldsEdge,
 });
 
-const parseExternalMapResponse = (external: ExternalMapResponse): Map => {
-  const code: MapCode | undefined = MapCodeMapping[external.code];
+export const parseExternalMapResponse = (map: ExternalMapResponse): Map => {
+  const code: MapCode | undefined = MapCodeMapping[map.code];
 
   return {
     code,
-    end: getDateFromUnix(external.end).toISOString(),
-    start: getDateFromUnix(external.start).toISOString(),
+    end: getDateFromUnix(map.end).toISOString(),
+    start: getDateFromUnix(map.start).toISOString(),
     // If internal code exists, we use internal asset, otherwise we rely on external asset.
-    image: code ? MapImage[code] : external.asset,
+    image: code ? MapImage[code] : map.asset,
     // If internal code exists, we use internal name, otherwise we rely on external name.
-    name: code ? MapName[code] : external.map,
+    name: code ? MapName[code] : map.map,
   };
 };
 
-const parseExternalMapRotationResponse = ({
-  current,
-  next,
-}: ExternalMapRotationResponse): MapRotation => ({
-  current: parseExternalMapResponse(current),
-  next: parseExternalMapResponse(next),
+export const parseExternalMapRotationResponse = (
+  mapRotation: ExternalMapRotationResponse
+): MapRotation => ({
+  current: parseExternalMapResponse(mapRotation.current),
+  next: parseExternalMapResponse(mapRotation.next),
 });
+
+export const parseExternalMapRotationPerModeResponse = (
+  response: ExternalMapRotationPerModeResponse
+) => {
+  /**
+   * Edge-cases that only happen when the data is requested in the very same
+   * second the map has changed.
+   *
+   * 1. On PUBS & RANKED schedule: `[]`
+   * 2. On PUBS schedule: `{ ranked: { current, next } }`
+   * 3. On RANKED schedule: N/A
+   *
+   * @todo report this issue to the API Maintainers so they can correct it.
+   */
+  if (Array.isArray(response) || !response.battle_royale) {
+    throw new Error(
+      `API returned data with invalid format (response: ${JSON.stringify(
+        response
+      )})`
+    );
+  }
+
+  return {
+    pubs: parseExternalMapRotationResponse(response.battle_royale),
+    ranked: parseExternalMapRotationResponse(response.ranked),
+  };
+};
 
 export const getMapRotationPerMode = (
   url: string
 ): Promise<MapRotationPerMode> => {
   return apexLegendsApi
     .get<ExternalMapRotationPerModeResponse>(url)
-    .then(({ data }) => {
-      /**
-       * Edge-cases that only happen when the data is requested in the very same
-       * second the map has changed.
-       *
-       * 1. On PUBS & RANKED schedule: `[]`
-       * 2. On PUBS schedule: `{ battle_royale: undefined, ranked: { current, next } }`
-       * 3. On RANKED schedule: `TBD`
-       *
-       * @todo report this issue to the API Maintainers so they can correct it.
-       */
-      if (
-        Array.isArray(data) ||
-        Array.isArray(data.battle_royale) ||
-        Array.isArray(data.ranked)
-      ) {
-        throw new Error(
-          `API returned data with invalid format (response: ${JSON.stringify(
-            data
-          )})`
-        );
-      }
-
-      return {
-        pubs: parseExternalMapRotationResponse(data.battle_royale),
-        ranked: parseExternalMapRotationResponse(data.ranked),
-      };
-    });
+    .then(({ data }) => parseExternalMapRotationPerModeResponse(data));
 };
