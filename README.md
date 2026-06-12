@@ -34,7 +34,7 @@ git clone git@github.com:lgaspari/apex-map-rotation.git && cd apex-map-rotation
 
 ### Install packages
 
-Then, use `pnpm` to install the dependencies (requires [Node.js](https://nodejs.org/) 24+):
+Then, use `pnpm` to install the dependencies (requires [Node.js](https://nodejs.org/) 22.12+):
 
 ```bash
 corepack enable
