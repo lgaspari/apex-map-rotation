@@ -34,10 +34,12 @@ git clone git@github.com:lgaspari/apex-map-rotation.git && cd apex-map-rotation
 
 ### Install packages
 
-Then, use `npm` to install the dependencies:
+Then, use `pnpm` to install the dependencies (requires [Node.js](https://nodejs.org/) 24+):
 
 ```bash
-npm install
+corepack enable
+pnpm install
+pnpm exec playwright install chromium
 ```
 
 ### Configure environment variables
@@ -51,7 +53,7 @@ Make a copy of the `.env` file into `.env.local`. Fill empty environment variabl
 Now, for the most part, you will be using this command to run the application:
 
 ```bash
-npm run start
+pnpm run start
 ```
 
 ### Start application in Production mode
@@ -59,7 +61,7 @@ npm run start
 Otherwise, if you would like to run the application using production code, use this instead:
 
 ```bash
-npm run start:production
+pnpm run start:production
 ```
 
 ### Linting & Code Formatting
@@ -67,7 +69,7 @@ npm run start:production
 We use [ESLint](https://eslint.org/) for finding and fixing problems in our code. Check your local code by running the following command:
 
 ```bash
-npm run lint
+pnpm run lint
 ```
 
 In addition, you may install [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and [Prettier](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode) extensions for Visual Studio Code to help you detect errors and correct code format.
@@ -77,7 +79,7 @@ In addition, you may install [ESLint](https://marketplace.visualstudio.com/items
 We use [Vitest](https://vitest.dev/) as the testing framework for our application. Check your local tests by running the following command:
 
 ```bash
-npm run test
+pnpm run test
 ```
 
 In addition, you may install [Vitest](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) extension for Visual Studio Code to run tests quickly.
@@ -91,7 +93,7 @@ A continuous integration workflow runs on every push to the `main` branch. When 
 Currently, there is no continuous deployment configured; you will have to run this command manually:
 
 ```bash
-npm run deploy
+pnpm run deploy
 ```
 
 > Please, refrain from deploying into production without notice.
@@ -107,7 +109,7 @@ We use [Vite](https://vitejs.dev/) to run and build the application. Therefore, 
 For generating the minimal PWA assets needed, we use [Vite PWA Assets Generator](https://vite-pwa-org.netlify.app/assets-generator/). The command below will generate the assets based on the file `public/logo.svg` using the configuration from [pwa-assets.config.ts](pwa-assets.config.ts). Make sure it's been updated before running it:
 
 ```bash
-npm run generate-pwa-assets
+pnpm run generate-pwa-assets
 ```
 
 ### PWA Troubleshooting

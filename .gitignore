@@ -12,6 +12,9 @@ coverage
 # dependencies
 node_modules
 
+# pnpm
+.pnpm-store
+
 # editor directories and files
 .vscode/*
 !.vscode/extensions.json

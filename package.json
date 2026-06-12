@@ -4,11 +4,19 @@
   "version": "0.1.0",
   "homepage": "https://lgaspari.github.io/apex-map-rotation/",
   "type": "module",
+  "packageManager": "pnpm@10.28.0",
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "msw",
+      "sharp"
+    ]
+  },
   "scripts": {
     "build": "vite build",
     "lint": "tsc --noEmit && eslint ./src --ext .tsx,.ts --fix --max-warnings 0",
     "start": "vite",
-    "start:production": "npm run build && vite preview",
+    "start:production": "vite build && vite preview",
     "test": "TZ=UTC vitest run",
     "test:watch": "TZ=UTC vitest",
     "test:coverage": "TZ=UTC vitest run --coverage",
