@@ -11,6 +11,13 @@ import {
   parseExternalMapRotationResponse,
 } from 'lib/api';
 
+const api = vi.hoisted(() => ({ get: vi.fn() }));
+const axios = vi.hoisted(() => ({ create: vi.fn(() => api) }));
+
+vi.mock('axios', () => {
+  return { default: axios };
+});
+
 const mockExternalMapResponse = (data: Partial<ExternalMapResponse> = {}) =>
   ({
     asset: 'Only relevant for fallback value',
@@ -153,18 +160,12 @@ describe('parseExternalMapRotationPerModeResponse()', () => {
 });
 
 describe('getMapRotationPerMode()', () => {
-  const api = vi.hoisted(() => ({ get: vi.fn() }));
-  const axios = vi.hoisted(() => ({ create: vi.fn(() => api) }));
-  vi.mock('axios', () => {
-    return { default: axios };
-  });
-
-  test('should call map rotation API using an axios instance', () => {
+  test('should call map rotation API using an axios instance', async () => {
     const data = mockExternalMapRotationPerModeResponse();
     api.get.mockResolvedValueOnce({ data });
 
     const url = '/api/get-map-rotation';
-    expect(getMapRotationPerMode(url)).resolves.toEqual(
+    await expect(getMapRotationPerMode(url)).resolves.toEqual(
       parseExternalMapRotationPerModeResponse(data)
     );
     expect(axios.create).toHaveBeenCalled();
