@@ -1,4 +1,4 @@
-import { userEvent } from '@vitest/browser/context';
+import { userEvent } from 'vitest/browser';
 import { describe, expect, test, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { MapCode, MapName } from 'constants/map';
@@ -29,7 +29,7 @@ const mockSettings = ({
   };
 };
 
-function setup({
+async function setup({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onClose = () => {},
   opened = true,
@@ -37,7 +37,7 @@ function setup({
   setSettings = () => {},
   settings = mockSettings(),
 }: Partial<SettingsModalProps> = {}) {
-  const screen = render(
+  const screen = await render(
     <SettingsModal
       onClose={onClose}
       opened={opened}
@@ -49,8 +49,8 @@ function setup({
   return { screen };
 }
 
-function setupNotifications(props: Partial<SettingsModalProps> = {}) {
-  const { screen } = setup(props);
+async function setupNotifications(props: Partial<SettingsModalProps> = {}) {
+  const { screen } = await setup(props);
 
   return {
     getMapCheckbox: (code: MapCode) =>
@@ -61,7 +61,7 @@ function setupNotifications(props: Partial<SettingsModalProps> = {}) {
 }
 
 test('does not render modal if not opened', async () => {
-  const { screen } = setup({ opened: false });
+  const { screen } = await setup({ opened: false });
 
   await expect
     .element(screen.getByTestId('settings-modal-overlay'))
@@ -71,7 +71,7 @@ test('does not render modal if not opened', async () => {
 test('can close modal', async () => {
   const onClose = vi.fn();
 
-  const { screen } = setup({ onClose });
+  const { screen } = await setup({ onClose });
 
   await screen.getByRole('button', { name: 'Discard' }).click();
   expect(onClose).toHaveBeenCalled();
@@ -79,7 +79,8 @@ test('can close modal', async () => {
 
 describe('Notifications', () => {
   test('can display notification settings', async () => {
-    const { getMapCheckbox, screen, thresholdSelect } = setupNotifications();
+    const { getMapCheckbox, screen, thresholdSelect } =
+      await setupNotifications();
 
     await expect.element(screen.getByText('Notifications')).toBeInTheDocument();
 
@@ -103,7 +104,7 @@ describe('Notifications', () => {
     const selectedThreshold = Threshold.SIXTY_MINUTES;
     const setSettings = vi.fn();
 
-    const { thresholdSelect, screen } = setupNotifications({
+    const { thresholdSelect, screen } = await setupNotifications({
       onClose,
       setSettings,
       settings: mockSettings({ notifications }),
@@ -140,7 +141,7 @@ describe('Notifications', () => {
     const onClose = vi.fn();
     const setSettings = vi.fn();
 
-    const { getMapCheckbox, screen } = setupNotifications({
+    const { getMapCheckbox, screen } = await setupNotifications({
       onClose,
       setSettings,
       settings: mockSettings({ notifications }),

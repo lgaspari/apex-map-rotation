@@ -9,14 +9,13 @@
     "jsx": "react-jsx",
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "noEmit": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
     "target": "ESNext",
     "types": [
-      "@vitest/browser/providers/playwright",
       "vite/client",
       "vite-plugin-pwa/react",
       "vite-plugin-svgr/client"

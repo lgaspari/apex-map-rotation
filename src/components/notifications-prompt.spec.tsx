@@ -25,13 +25,15 @@ const defaultSettings: NotificationsPromptProps['notificationsSettings'] = {
   threshold: Threshold.FIFTEEN_MINUTES,
 };
 
-function setup(props: Partial<NotificationsPromptProps> = {}) {
+async function setup(props: Partial<NotificationsPromptProps> = {}) {
   const defaultProps: NotificationsPromptProps = {
     notificationsSettings: defaultSettings,
     setNotificationsSettings: vi.fn(),
   };
 
-  const screen = render(<NotificationsPrompt {...defaultProps} {...props} />);
+  const screen = await render(
+    <NotificationsPrompt {...defaultProps} {...props} />
+  );
 
   return {
     defaultProps,
@@ -40,11 +42,11 @@ function setup(props: Partial<NotificationsPromptProps> = {}) {
 }
 
 describe('Supported', () => {
-  test('should not prompt notification permission if supported and granted or denied', () => {
+  test('should not prompt notification permission if supported and granted or denied', async () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(true);
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(false);
 
-    const { screen } = setup();
+    const { screen } = await setup();
 
     expect(
       screen
@@ -52,21 +54,21 @@ describe('Supported', () => {
           name: '🔕 Disabled map notifications',
         })
         .query()
-    ).not.toBeInTheDocument();
+    ).toBeNull();
     expect(
       screen
         .getByRole('dialog', {
           name: "🔔 Hey, don't miss your favorite map!",
         })
         .query()
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
-  test('should not prompt notification permission if setting is false', () => {
+  test('should not prompt notification permission if setting is false', async () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(true);
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { screen } = setup({
+    const { screen } = await setup({
       notificationsSettings: {
         ...defaultSettings,
         prompt: false,
@@ -79,21 +81,21 @@ describe('Supported', () => {
           name: '🔕 Disabled map notifications',
         })
         .query()
-    ).not.toBeInTheDocument();
+    ).toBeNull();
     expect(
       screen
         .getByRole('dialog', {
           name: "🔔 Hey, don't miss your favorite map!",
         })
         .query()
-    ).not.toBeInTheDocument();
+    ).toBeNull();
   });
 
   test('can prevent from showing prompt again', async () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(true);
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { defaultProps, screen } = setup();
+    const { defaultProps, screen } = await setup();
 
     await screen.getByRole('button', { name: "Don't show again" }).click();
 
@@ -116,7 +118,7 @@ describe('Supported', () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(true);
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { screen } = setup({
+    const { screen } = await setup({
       notificationsSettings: {
         ...defaultSettings,
         prompt: undefined, // should work the same as `true`
@@ -156,7 +158,7 @@ describe('Supported', () => {
     vi.mocked(requestNotificationPermission).mockResolvedValueOnce('default');
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { defaultProps, screen } = setup();
+    const { defaultProps, screen } = await setup();
 
     await screen.getByRole('button', { name: 'Yes' }).click();
 
@@ -186,7 +188,7 @@ describe('Supported', () => {
     });
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { defaultProps, screen } = setup();
+    const { defaultProps, screen } = await setup();
 
     await screen.getByRole('button', { name: 'Yes' }).click();
 
@@ -214,7 +216,7 @@ describe('Supported', () => {
     vi.mocked(requestNotificationPermission).mockResolvedValueOnce('granted');
     vi.mocked(shouldPromptNotificationPermission).mockReturnValue(true);
 
-    const { defaultProps, screen } = setup();
+    const { defaultProps, screen } = await setup();
 
     await screen.getByRole('button', { name: 'Yes' }).click();
 
@@ -242,7 +244,7 @@ describe('Not Supported', () => {
   test('should announce disabled notifications if not supported', async () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(false);
 
-    const { screen } = setup();
+    const { screen } = await setup();
 
     await expect
       .element(
@@ -275,7 +277,7 @@ describe('Not Supported', () => {
   test('can prevent from showing prompt again', async () => {
     vi.mocked(isNotificationAPISupported).mockReturnValue(false);
 
-    const { defaultProps, screen } = setup();
+    const { defaultProps, screen } = await setup();
 
     await screen.getByRole('button', { name: "Don't show again" }).click();
 

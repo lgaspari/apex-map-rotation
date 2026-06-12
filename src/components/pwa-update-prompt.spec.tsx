@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import { waitForElementToBeRemoved } from '@testing-library/react';
 import { afterAll, expect, test, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
@@ -12,14 +13,14 @@ afterAll(() => {
   consoleLogMock.mockReset();
 });
 
-function setup() {
-  const screen = render(<PWAUpdatePrompt />);
+async function setup() {
+  const screen = await render(<PWAUpdatePrompt />);
 
   return { screen };
 }
 
 test('can close prompt', async () => {
-  const { screen } = setup();
+  const { screen } = await setup();
 
   await screen.getByRole('button', { name: 'Later' }).click();
 
@@ -35,7 +36,7 @@ test('can close prompt', async () => {
 });
 
 test('can reload page', async () => {
-  const { screen } = setup();
+  const { screen } = await setup();
 
   await expect
     .element(
@@ -67,7 +68,7 @@ test('can reload page', async () => {
   );
 });
 
-test('should log message if succeeded to register service worker', () => {
+test('should log message if succeeded to register service worker', async () => {
   consoleLogMock.mockImplementationOnce(() => vi.fn());
 
   const url = '/dev-sw.js?dev-sw';
@@ -75,17 +76,20 @@ test('should log message if succeeded to register service worker', () => {
     onRegisteredSW?.(url);
 
     return {
-      needRefresh: [false, vi.fn()],
+      needRefresh: [false, vi.fn()] as [
+        boolean,
+        Dispatch<SetStateAction<boolean>>,
+      ],
       updateServiceWorker: vi.fn(),
     };
   });
 
-  setup();
+  await setup();
 
   expect(consoleLogMock).toHaveBeenCalledWith('SW registered', url);
 });
 
-test('should log error message if failed to register service worker', () => {
+test('should log error message if failed to register service worker', async () => {
   consoleErrorMock.mockImplementationOnce(() => vi.fn());
 
   const error = { message: 'error' };
@@ -93,12 +97,15 @@ test('should log error message if failed to register service worker', () => {
     onRegisterError?.(error);
 
     return {
-      needRefresh: [false, vi.fn()],
+      needRefresh: [false, vi.fn()] as [
+        boolean,
+        Dispatch<SetStateAction<boolean>>,
+      ],
       updateServiceWorker: vi.fn(),
     };
   });
 
-  setup();
+  await setup();
 
   expect(consoleErrorMock).toHaveBeenCalledWith('SW registration error', error);
 });

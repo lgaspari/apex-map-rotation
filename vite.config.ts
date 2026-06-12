@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 
 import react from '@vitejs/plugin-react';
+import { playwright } from '@vitest/browser-playwright';
 import fs from 'fs';
 import { defineConfig, loadEnv } from 'vite';
 import { coverageConfigDefaults } from 'vitest/config';
@@ -20,7 +21,8 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_');
   const baseUrl = getBaseUrl(mode);
 
-  const isPwaEnabled = env.VITE_PWA_ENABLED === 'true';
+  const isPwaEnabled =
+    mode !== 'test' && env.VITE_PWA_ENABLED === 'true';
 
   return {
     // Set base url depending on the build mode.
@@ -120,17 +122,17 @@ export default defineConfig(({ mode }) => {
       browser: {
         enabled: true,
         headless: true,
-        name: 'chromium',
-        provider: 'playwright',
-        providerOptions: {},
+        provider: playwright(),
+        instances: [{ browser: 'chromium' }],
       },
       coverage: {
         exclude: ['src/main.tsx', ...coverageConfigDefaults.exclude],
-        include: ['src/**/*'],
+        include: ['src/**/*.{ts,tsx}'],
         provider: 'istanbul',
       },
       dir: 'src',
       include: ['**/*.spec.tsx'],
+      setupFiles: ['./vitest.browser.setup.ts'],
     },
 
     // Local server configuration.

@@ -2,7 +2,7 @@
 
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { defineConfig } from 'vitest/config';
+import { coverageConfigDefaults, defineConfig } from 'vitest/config';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -18,6 +18,11 @@ export default defineConfig({
     },
   },
   test: {
+    coverage: {
+      exclude: ['src/main.tsx', ...coverageConfigDefaults.exclude],
+      include: ['src/**/*.{ts,tsx}'],
+      provider: 'istanbul',
+    },
     include: ['tests/**/*.spec.ts'],
   },
 });

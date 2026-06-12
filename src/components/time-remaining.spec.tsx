@@ -4,7 +4,7 @@ import TimeRemaining, { type TimeRemainingProps } from './time-remaining';
 
 const systemDateTime = '2019-06-30T16:00:00Z';
 
-function setup({
+async function setup({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTimeRemaining = () => {},
   to = '2019-06-30T16:00:00Z',
@@ -13,11 +13,12 @@ function setup({
     <TimeRemaining onTimeRemaining={onTimeRemaining} to={to} {...props} />
   );
 
-  const screen = render(renderComponent());
+  const screen = await render(renderComponent());
 
   return {
-    rerender: (props: Partial<TimeRemainingProps> = {}) =>
-      screen.rerender(renderComponent(props)),
+    rerender: async (props: Partial<TimeRemainingProps> = {}) => {
+      await screen.rerender(renderComponent(props));
+    },
     timer: screen.getByRole('timer'),
   };
 }
@@ -33,13 +34,13 @@ afterEach(() => {
 });
 
 test('should display remaining time', async () => {
-  const { timer } = setup({ to: '2019-06-30T16:34:01Z' });
+  const { timer } = await setup({ to: '2019-06-30T16:34:01Z' });
 
   await expect.element(timer).toHaveTextContent('34m 1s');
 });
 
 test('should update remaining time after one second', async () => {
-  const { timer } = setup({ to: '2019-06-30T16:09:59Z' });
+  const { timer } = await setup({ to: '2019-06-30T16:09:59Z' });
 
   await expect.element(timer).toHaveTextContent('9m 59s');
   vi.advanceTimersByTime(1000);
@@ -47,15 +48,15 @@ test('should update remaining time after one second', async () => {
 });
 
 test('should update remaining time when `to` prop changes', async () => {
-  const { rerender, timer } = setup();
+  const { rerender, timer } = await setup();
 
   await expect.element(timer).toHaveTextContent('0s');
-  rerender({ to: '2019-06-30T18:30:00Z' });
+  await rerender({ to: '2019-06-30T18:30:00Z' });
   await expect.element(timer).toHaveTextContent('2h 30m 0s');
 });
 
 test('should stop timer if completed', async () => {
-  const { timer } = setup({ to: '2019-06-30T16:00:10Z' });
+  const { timer } = await setup({ to: '2019-06-30T16:00:10Z' });
 
   await expect.element(timer).toHaveTextContent('10s');
   vi.advanceTimersByTime(10000);
@@ -67,7 +68,7 @@ test('should stop timer if completed', async () => {
 test('should trigger `onTimeRemaining` callback every second', async () => {
   const onTimeRemaining = vi.fn();
 
-  setup({ onTimeRemaining, to: '2019-06-30T16:00:02Z' });
+  await setup({ onTimeRemaining, to: '2019-06-30T16:00:02Z' });
 
   vi.advanceTimersByTime(1000);
   await vi.waitFor(() => {
@@ -83,7 +84,7 @@ test('should trigger updated `onTimeRemaining` callback', async () => {
   const onTimeRemaining1 = vi.fn();
   const onTimeRemaining2 = vi.fn();
 
-  const { rerender } = setup({
+  const { rerender } = await setup({
     onTimeRemaining: onTimeRemaining1,
     to: '2019-06-30T16:00:02Z',
   });
@@ -93,7 +94,7 @@ test('should trigger updated `onTimeRemaining` callback', async () => {
     expect(onTimeRemaining1).toHaveBeenCalledWith(1000);
   });
 
-  rerender({ onTimeRemaining: onTimeRemaining2 });
+  await rerender({ onTimeRemaining: onTimeRemaining2 });
 
   vi.advanceTimersByTime(1000);
   await vi.waitFor(() => {
@@ -103,11 +104,11 @@ test('should trigger updated `onTimeRemaining` callback', async () => {
 });
 
 test('should not display negative values if re-rendered past time', async () => {
-  const { rerender, timer } = setup();
+  const { rerender, timer } = await setup();
 
   await expect.element(timer).toHaveTextContent('0s');
 
   vi.advanceTimersByTime(1000);
-  rerender();
+  await rerender();
   await expect.element(timer).toHaveTextContent('0s');
 });

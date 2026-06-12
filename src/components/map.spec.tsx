@@ -22,12 +22,12 @@ const mockMap = (props: Partial<MapType> = {}): MapType => {
   };
 };
 
-function setup({
+async function setup({
   current,
   isRankedGameMode,
   map = mockMap(),
 }: Partial<MapProps>) {
-  const screen = render(
+  const screen = await render(
     <Map current={current} isRankedGameMode={isRankedGameMode} map={map} />
   );
 
@@ -45,7 +45,7 @@ afterEach(() => {
 });
 
 test('can display current map', async () => {
-  const { screen } = setup({ current: true });
+  const { screen } = await setup({ current: true });
 
   await expect.element(screen.getByText('Live')).toBeInTheDocument();
   await expect.element(screen.getByText('Upcoming')).not.toBeInTheDocument();
@@ -59,7 +59,7 @@ test('should turn "is ending" state when passing the threshold for the current m
       .toISOString(),
   });
 
-  const { screen } = setup({ current: true, map });
+  const { screen } = await setup({ current: true, map });
 
   const mapComponent = screen.getByTestId('map');
 
@@ -75,7 +75,7 @@ test('should turn "has ended" state when passing the threshold for the current m
       .toISOString(),
   });
 
-  const { screen } = setup({ current: true, map });
+  const { screen } = await setup({ current: true, map });
 
   const mapComponent = screen.getByTestId('map');
 
@@ -85,7 +85,7 @@ test('should turn "has ended" state when passing the threshold for the current m
 });
 
 test('can display next map', async () => {
-  const { screen } = setup({ current: false });
+  const { screen } = await setup({ current: false });
 
   await expect.element(screen.getByText('Upcoming')).toBeInTheDocument();
   await expect.element(screen.getByText('Live')).not.toBeInTheDocument();
@@ -97,7 +97,7 @@ test('can display map for ranked mode', async () => {
     start: getDate(systemDateTime).add(-1, 'day').toISOString(),
   });
 
-  const { screen } = setup({ isRankedGameMode: true, map });
+  const { screen } = await setup({ isRankedGameMode: true, map });
 
   await expect
     .element(screen.getByTestId('map-schedule'))
@@ -118,7 +118,7 @@ describe('Maps', () => {
       start: '2019-06-30T15:30:00Z',
     });
 
-    const { screen } = setup({ map });
+    const { screen } = await setup({ map });
 
     await expect.element(screen.getByText(name)).toBeInTheDocument();
     await expect
