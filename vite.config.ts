@@ -7,7 +7,6 @@ import { defineConfig, loadEnv } from 'vite';
 import { coverageConfigDefaults } from 'vitest/config';
 import { VitePWA } from 'vite-plugin-pwa';
 import svgr from 'vite-plugin-svgr';
-import tsconfigPaths from 'vite-tsconfig-paths';
 
 // Used for Vite's base url as well as Workbox's modify url prefix.
 const getBaseUrl = (mode: string) =>
@@ -27,6 +26,11 @@ export default defineConfig(({ mode }) => {
   return {
     // Set base url depending on the build mode.
     base: baseUrl,
+
+    // Let's Vite understand non-relative imports via baseUrl or paths.
+    resolve: {
+      tsconfigPaths: true,
+    },
 
     // Simplifies the process of creating a PWA/Service Worker enabled app.
     plugins: [
@@ -101,9 +105,6 @@ export default defineConfig(({ mode }) => {
           },
         },
       }),
-
-      // Let's Vite understand non-relative imports via baseUrl or paths.
-      tsconfigPaths(),
 
       // Allows importing svgs as React components.
       // e.g. import { ReactComponent as Logo } from './logo.svg'
