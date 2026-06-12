@@ -1,5 +1,4 @@
 import { waitForElementToBeRemoved } from '@testing-library/react';
-import { page, userEvent } from '@vitest/browser/context';
 import { afterAll, describe, expect, test, vi } from 'vitest';
 import { render } from 'vitest-browser-react';
 import { MapCode } from 'constants/map';
@@ -13,8 +12,6 @@ import {
 import NotificationsPrompt, {
   type NotificationsPromptProps,
 } from './notifications-prompt';
-
-vi.mock('lib/notifications');
 
 const consoleErrorMock = vi.spyOn(console, 'error');
 
@@ -34,12 +31,9 @@ function setup(props: Partial<NotificationsPromptProps> = {}) {
     setNotificationsSettings: vi.fn(),
   };
 
-  const utils = render(<NotificationsPrompt {...defaultProps} {...props} />);
-
-  const screen = page.elementLocator(utils.baseElement);
+  const screen = render(<NotificationsPrompt {...defaultProps} {...props} />);
 
   return {
-    ...utils,
     defaultProps,
     screen,
   };
@@ -101,9 +95,7 @@ describe('Supported', () => {
 
     const { defaultProps, screen } = setup();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: "Don't show again" })
-    );
+    await screen.getByRole('button', { name: "Don't show again" }).click();
 
     expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
       prompt: false,
@@ -146,7 +138,7 @@ describe('Supported', () => {
       )
       .toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Not now' }));
+    await screen.getByRole('button', { name: 'Not now' }).click();
 
     await waitForElementToBeRemoved(
       () =>
@@ -166,7 +158,7 @@ describe('Supported', () => {
 
     const { defaultProps, screen } = setup();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Yes' }));
+    await screen.getByRole('button', { name: 'Yes' }).click();
 
     expect(requestNotificationPermission).toHaveBeenCalled();
     expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
@@ -196,7 +188,7 @@ describe('Supported', () => {
 
     const { defaultProps, screen } = setup();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Yes' }));
+    await screen.getByRole('button', { name: 'Yes' }).click();
 
     expect(requestNotificationPermission).toHaveBeenCalled();
     expect(defaultProps.setNotificationsSettings).not.toHaveBeenCalled();
@@ -224,7 +216,7 @@ describe('Supported', () => {
 
     const { defaultProps, screen } = setup();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Yes' }));
+    await screen.getByRole('button', { name: 'Yes' }).click();
 
     expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
       prompt: false,
@@ -267,7 +259,7 @@ describe('Not Supported', () => {
       )
       .toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Understood' }));
+    await screen.getByRole('button', { name: 'Understood' }).click();
 
     await waitForElementToBeRemoved(
       () =>
@@ -285,9 +277,7 @@ describe('Not Supported', () => {
 
     const { defaultProps, screen } = setup();
 
-    await userEvent.click(
-      screen.getByRole('button', { name: "Don't show again" })
-    );
+    await screen.getByRole('button', { name: "Don't show again" }).click();
 
     expect(defaultProps.setNotificationsSettings).toHaveBeenCalledWith({
       prompt: false,

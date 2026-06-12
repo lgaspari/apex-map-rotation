@@ -9,6 +9,9 @@ dev-dist
 coverage
 *.lcov
 
+# vitest browser failure screenshots
+**/__screenshots__
+
 # dependencies
 node_modules
 

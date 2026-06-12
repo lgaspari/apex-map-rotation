@@ -111,13 +111,15 @@ export default defineConfig(({ mode }) => {
       react(),
     ],
 
-    // Vitest configuration.
+    // Vitest configuration (browser component tests only).
     test: {
       alias: {
         'virtual:pwa-register/react': 'mocks/pwa',
+        'lib/notifications': 'mocks/notifications',
       },
       browser: {
         enabled: true,
+        headless: true,
         name: 'chromium',
         provider: 'playwright',
         providerOptions: {},
@@ -128,6 +130,7 @@ export default defineConfig(({ mode }) => {
         provider: 'istanbul',
       },
       dir: 'src',
+      include: ['**/*.spec.tsx'],
     },
 
     // Local server configuration.

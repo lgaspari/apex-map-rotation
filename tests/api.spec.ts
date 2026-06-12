@@ -9,7 +9,7 @@ import {
   parseExternalMapResponse,
   parseExternalMapRotationPerModeResponse,
   parseExternalMapRotationResponse,
-} from './api';
+} from 'lib/api';
 
 const mockExternalMapResponse = (data: Partial<ExternalMapResponse> = {}) =>
   ({

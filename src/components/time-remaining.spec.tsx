@@ -69,10 +69,12 @@ test('should trigger `onTimeRemaining` callback every second', async () => {
 
   setup({ onTimeRemaining, to: '2019-06-30T16:00:02Z' });
 
-  vi.waitFor(() => {
+  vi.advanceTimersByTime(1000);
+  await vi.waitFor(() => {
     expect(onTimeRemaining).toHaveBeenCalledWith(1000);
   });
-  vi.waitFor(() => {
+  vi.advanceTimersByTime(1000);
+  await vi.waitFor(() => {
     expect(onTimeRemaining).toHaveBeenCalledWith(0);
   });
 });
@@ -86,13 +88,15 @@ test('should trigger updated `onTimeRemaining` callback', async () => {
     to: '2019-06-30T16:00:02Z',
   });
 
-  vi.waitFor(() => {
+  vi.advanceTimersByTime(1000);
+  await vi.waitFor(() => {
     expect(onTimeRemaining1).toHaveBeenCalledWith(1000);
   });
 
   rerender({ onTimeRemaining: onTimeRemaining2 });
 
-  vi.waitFor(() => {
+  vi.advanceTimersByTime(1000);
+  await vi.waitFor(() => {
     expect(onTimeRemaining2).toHaveBeenCalledWith(0);
     expect(onTimeRemaining1).toHaveBeenCalledTimes(1);
   });
