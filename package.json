@@ -13,7 +13,13 @@
       "esbuild",
       "msw",
       "sharp"
-    ]
+    ],
+    "peerDependencyRules": {
+      "allowedVersions": {
+        "@testing-library/react>react": "19",
+        "@testing-library/react>react-dom": "19"
+      }
+    }
   },
   "scripts": {
     "build": "vite build",
@@ -30,14 +36,14 @@
   },
   "dependencies": {
     "dayjs": "^1.11.10",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "swr": "^2.2.5"
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "swr": "^2.4.1"
   },
   "devDependencies": {
     "@testing-library/react": "^14.3.1",
-    "@types/react": "^18.2.65",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
     "@vite-pwa/assets-generator": "^1.0.2",
