@@ -1,4 +1,5 @@
-import { describe, expect, test, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
+import { APEX_LEGENDS_API_AUTH_TOKEN } from 'config/env';
 import { MapCode, MapImage, MapName } from 'constants/map';
 import {
   ExternalMapCode,
@@ -11,11 +12,15 @@ import {
   parseExternalMapRotationResponse,
 } from 'lib/api';
 
-const api = vi.hoisted(() => ({ get: vi.fn() }));
-const axios = vi.hoisted(() => ({ create: vi.fn(() => api) }));
+const fetchMock = vi.hoisted(() => vi.fn());
 
-vi.mock('axios', () => {
-  return { default: axios };
+beforeEach(() => {
+  vi.stubGlobal('fetch', fetchMock);
+});
+
+afterEach(() => {
+  vi.unstubAllGlobals();
+  fetchMock.mockReset();
 });
 
 const mockExternalMapResponse = (data: Partial<ExternalMapResponse> = {}) =>
@@ -160,15 +165,39 @@ describe('parseExternalMapRotationPerModeResponse()', () => {
 });
 
 describe('getMapRotationPerMode()', () => {
-  test('should call map rotation API using an axios instance', async () => {
+  test('should call map rotation API using fetch', async () => {
     const data = mockExternalMapRotationPerModeResponse();
-    api.get.mockResolvedValueOnce({ data });
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(data),
+    });
 
     const url = '/api/get-map-rotation';
     await expect(getMapRotationPerMode(url)).resolves.toEqual(
       parseExternalMapRotationPerModeResponse(data)
     );
-    expect(axios.create).toHaveBeenCalled();
-    expect(api.get).toHaveBeenCalledWith(url);
+
+    expect(fetchMock).toHaveBeenCalledOnce();
+    const calledUrl = new URL(fetchMock.mock.calls[0][0] as string);
+    expect(calledUrl.pathname).toBe(url);
+    expect(calledUrl.searchParams.get('auth')).toBe(
+      APEX_LEGENDS_API_AUTH_TOKEN
+    );
+  });
+
+  test('should forward abort signal to fetch', async () => {
+    const data = mockExternalMapRotationPerModeResponse();
+    const signal = new AbortController().signal;
+    fetchMock.mockResolvedValueOnce({
+      ok: true,
+      json: () => Promise.resolve(data),
+    });
+
+    await getMapRotationPerMode('/api/get-map-rotation', { signal });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(URL),
+      expect.objectContaining({ signal })
+    );
   });
 });

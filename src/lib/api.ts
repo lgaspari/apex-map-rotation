@@ -1,11 +1,14 @@
-import axios from 'axios';
+import {
+  APEX_LEGENDS_API_AUTH_TOKEN,
+  APEX_LEGENDS_API_BASE_URL,
+} from 'config/env';
 import { MapCode, MapImage, MapName } from 'constants/map';
 import { getDateFromUnix } from 'lib/datetime';
 import type Map from 'types/map';
 import type { MapRotation, MapRotationPerMode } from 'types/map-rotation';
 
-const apexLegendsApi = axios.create({
-  baseURL: import.meta.env.VITE_APEX_LEGENDS_API,
+async function apiGet<T>(path: string, init?: RequestInit): Promise<T> {
+  const url = new URL(path, APEX_LEGENDS_API_BASE_URL);
 
   /**
    * There's a CORS error when trying to use the `Authorization` header instead
@@ -13,10 +16,16 @@ const apexLegendsApi = axios.create({
    *
    * @todo report this issue to the API Maintainers so they can correct it.
    */
-  params: {
-    auth: import.meta.env.VITE_APEX_LEGENDS_API_SECRET_TOKEN,
-  },
-});
+  url.searchParams.set('auth', APEX_LEGENDS_API_AUTH_TOKEN);
+
+  const response = await fetch(url, init);
+  if (!response.ok) {
+    throw new Error(
+      `API request failed: ${response.status} ${response.statusText}`
+    );
+  }
+  return response.json() as Promise<T>;
+}
 
 /**
  * Mapping date: 18/10/24
@@ -122,9 +131,9 @@ export const parseExternalMapRotationPerModeResponse = (
 };
 
 export const getMapRotationPerMode = (
-  url: string
-): Promise<MapRotationPerMode> => {
-  return apexLegendsApi
-    .get<ExternalMapRotationPerModeResponse>(url)
-    .then(({ data }) => parseExternalMapRotationPerModeResponse(data));
-};
+  url: string,
+  { signal }: { signal?: AbortSignal } = {}
+): Promise<MapRotationPerMode> =>
+  apiGet<ExternalMapRotationPerModeResponse>(url, { signal }).then(
+    parseExternalMapRotationPerModeResponse
+  );

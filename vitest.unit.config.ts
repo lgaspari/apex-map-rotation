@@ -12,6 +12,6 @@ export default defineConfig({
       include: ['src/**/*.{ts,tsx}'],
       provider: 'istanbul',
     },
-    include: ['tests/**/*.spec.ts'],
+    include: ['src/**/*.spec.ts'],
   },
 });

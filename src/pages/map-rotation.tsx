@@ -1,5 +1,6 @@
 import Map from 'components/map';
 import Spinner from 'components/spinner';
+import { APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT } from 'config/env';
 import useScheduledMapNotification from 'hooks/use-scheduled-map-notification';
 import { getMapRotationPerMode } from 'lib/api';
 import { getDiffToNow } from 'lib/datetime';
@@ -24,39 +25,36 @@ export default function MapRotationPage({ settings }: MapRotationPageProps) {
   );
 
   const { data, error, isLoading, isValidating, mutate } =
-    useSWR<MapRotationPerMode>(
-      import.meta.env.VITE_APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT,
-      {
-        /**
-         * We prefer manual retry over automatic retry. SWR will retry (revalidate)
-         * the data on focus if `revalidateOnFocus` is enabled.
-         */
-        errorRetryCount: 0,
+    useSWR<MapRotationPerMode>(APEX_LEGENDS_API_MAP_ROTATION_ENDPOINT, {
+      /**
+       * We prefer manual retry over automatic retry. SWR will retry (revalidate)
+       * the data on focus if `revalidateOnFocus` is enabled.
+       */
+      errorRetryCount: 0,
 
-        /**
-         * Use custom fetcher to parse api data.
-         */
-        fetcher: getMapRotationPerMode,
+      /**
+       * Use custom fetcher to parse api data.
+       */
+      fetcher: getMapRotationPerMode,
 
-        /**
-         * Refresh data when the current map finishes.
-         *
-         * There's an issue with the Apex Legends API that returns invalid data
-         * if requested in the exact same instant as the map changes. For that
-         * reason, instead of sending the request right on time, we include a
-         * one second delay.
-         *
-         * Otherwise, we disable the refresh interval by returning zero.
-         */
-        refreshInterval: (data) =>
-          data ? getDiffToNow(data[gameMode].current.end) + 1000 : 0,
+      /**
+       * Refresh data when the current map finishes.
+       *
+       * There's an issue with the Apex Legends API that returns invalid data
+       * if requested in the exact same instant as the map changes. For that
+       * reason, instead of sending the request right on time, we include a
+       * one second delay.
+       *
+       * Otherwise, we disable the refresh interval by returning zero.
+       */
+      refreshInterval: (data) =>
+        data ? getDiffToNow(data[gameMode].current.end) + 1000 : 0,
 
-        /**
-         * Enable refresh when window is not visible.
-         */
-        refreshWhenHidden: true,
-      }
-    );
+      /**
+       * Enable refresh when window is not visible.
+       */
+      refreshWhenHidden: true,
+    });
 
   const isRankedGameMode = gameMode === GameMode.Ranked;
 
