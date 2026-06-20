@@ -30,10 +30,8 @@ const mockSettings = ({
 };
 
 async function setup({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onClose = () => {},
   opened = true,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setSettings = () => {},
   settings = mockSettings(),
 }: Partial<SettingsModalProps> = {}) {

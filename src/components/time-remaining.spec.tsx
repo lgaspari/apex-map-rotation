@@ -5,7 +5,6 @@ import TimeRemaining, { type TimeRemainingProps } from './time-remaining';
 const systemDateTime = '2019-06-30T16:00:00Z';
 
 async function setup({
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTimeRemaining = () => {},
   to = '2019-06-30T16:00:00Z',
 }: Partial<TimeRemainingProps> = {}) {

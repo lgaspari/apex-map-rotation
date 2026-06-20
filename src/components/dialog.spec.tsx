@@ -4,7 +4,6 @@ import Dialog, { type DialogProps } from './dialog';
 
 async function setup({
   children = <div>Dialog content</div>,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onClose = () => {},
   opened = true,
   title = 'Dialog title',
