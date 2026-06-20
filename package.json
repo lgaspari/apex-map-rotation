@@ -29,7 +29,7 @@
     "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
-    "dayjs": "^1.11.10",
+    "dayjs": "^1.11.21",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "swr": "^2.4.1"
