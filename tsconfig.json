@@ -2,12 +2,13 @@
   "compilerOptions": {
     "allowJs": false,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "src",
-    "esModuleInterop": false,
+    "paths": {
+      "*": ["./src/*"]
+    },
     "forceConsistentCasingInFileNames": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "lib": ["DOM", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true,
