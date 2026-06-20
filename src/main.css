@@ -1,5 +1,20 @@
-@tailwind base;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-apex: #da292a;
+  --font-duke-fill:
+    Duke_Fill, ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-tt-lakes-w05-light:
+    TT_Lakes_W05_Light, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-tt-lakes-w05-medium:
+    TT_Lakes_W05_Medium, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-tt-lakes-w05-regular:
+    TT_Lakes_W05_Regular, ui-sans-serif, system-ui, sans-serif,
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
 
 @font-face {
   font-family: 'Duke_Fill';

@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import { playwright } from '@vitest/browser-playwright';
 import fs from 'fs';
 import { defineConfig, loadEnv } from 'vite';
@@ -34,6 +35,7 @@ export default defineConfig(({ mode }) => {
 
     // Simplifies the process of creating a PWA/Service Worker enabled app.
     plugins: [
+      tailwindcss(),
       VitePWA({
         // Enable PWA while in development mode.
         devOptions: {
