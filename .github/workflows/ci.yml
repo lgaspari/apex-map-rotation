@@ -87,3 +87,35 @@ jobs:
 
       - name: Build application
         run: pnpm run build
+
+  build-pwa:
+    name: Build (PWA)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build application with PWA enabled
+        env:
+          VITE_PWA_ENABLED: 'true'
+        run: pnpm run build
+
+      - name: Verify PWA artifacts
+        run: |
+          test -f dist/sw.js
+          test -f dist/manifest.webmanifest
+          grep -q '/apex-map-rotation/manifest.webmanifest' dist/index.html
+          grep -q '/apex-map-rotation/favicon.ico' dist/index.html
