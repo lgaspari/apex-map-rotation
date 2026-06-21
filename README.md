@@ -76,27 +76,47 @@ In addition, you may install [ESLint](https://marketplace.visualstudio.com/items
 
 ### Tests
 
-We use [Vitest](https://vitest.dev/) as the testing framework for our application. Check your local tests by running the following command:
+We use [Vitest](https://vitest.dev/) as the testing framework. Tests run in two suites: unit tests in Node and component tests in a headless browser (Playwright).
+
+Run all tests:
 
 ```bash
 pnpm run test
 ```
 
-In addition, you may install [Vitest](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) extension for Visual Studio Code to run tests quickly.
+Run suites individually or in watch mode:
+
+```bash
+pnpm run test:unit              # Node unit tests
+pnpm run test:browser           # Browser component tests
+pnpm run test:unit:watch        # Unit tests in watch mode
+pnpm run test:browser:watch     # Browser tests in watch mode
+```
+
+Generate a coverage report:
+
+```bash
+pnpm run test:coverage
+```
+
+In addition, you may install the [Vitest](https://marketplace.visualstudio.com/items?itemName=vitest.explorer) extension for Visual Studio Code to run tests quickly.
 
 ### Continuous Integration
 
-A continuous integration workflow runs on every push to the `main` branch. When your changes do not pass the `Lint` and `Test` steps, then the workflow fails. Please, make sure to correct those issues in a separate commit.
+A continuous integration workflow runs on every push to the `main` branch and on pull requests. When your changes do not pass the `Lint`, `Test`, `Build`, or `Build (PWA)` steps, the workflow fails. Please make sure to correct those issues in a separate commit.
 
 ### Deployments
 
-Currently, there is no continuous deployment configured; you will have to run this command manually:
+Production deployments to GitHub Pages are triggered automatically when you push a version tag (for example, `v0.12.0`):
 
 ```bash
-pnpm run deploy
+git tag v0.12.0
+git push origin v0.12.0
 ```
 
-> Please, refrain from deploying into production without notice.
+The [CD workflow](.github/workflows/cd.yml) builds the application and publishes the `dist` folder to the `gh-pages` branch.
+
+> Please refrain from deploying to production without notice.
 
 ## Progressive Web Application
 
