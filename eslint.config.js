@@ -1,6 +1,7 @@
 import js from '@eslint/js';
 import vitest from '@vitest/eslint-plugin';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
@@ -13,6 +14,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   react.configs.flat.recommended,
   reactHooks.configs.flat.recommended,
+  jsxA11y.flatConfigs.recommended,
   vitest.configs.recommended,
   eslintPluginPrettierRecommended,
   {
