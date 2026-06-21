@@ -20,6 +20,8 @@ Apex Legends Map Rotation was born from an effort to be able to know what map is
 
 Welcome, and thank you for contributing to Apex Legends - Map Rotation!
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for commit message conventions.
+
 ### Clone repository
 
 First off, clone the repository from GitHub:
