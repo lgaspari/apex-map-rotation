@@ -64,6 +64,40 @@ Otherwise, if you would like to run the application using production code, use t
 pnpm run start:production
 ```
 
+To run the production build with PWA enabled (service worker and manifest):
+
+```bash
+pnpm run start:production:pwa
+```
+
+### Quality metrics
+
+We use [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) to audit performance, accessibility, best practices, SEO, and PWA criteria. The same command runs locally and in CI:
+
+```bash
+pnpm lighthouse
+```
+
+Reports are written to `lhci-reports/`. Open the HTML files in that folder to review scores and recommendations.
+
+This check is **advisory** in CI—it does not block merges. Scores from the median run appear in the GitHub Actions job summary for the `Lighthouse` job. Download the `lighthouse-reports` artifact for full HTML reports.
+
+Notes:
+
+- Lab scores differ from real-user Web Vitals on GitHub Pages.
+- If the Apex Legends API is unavailable during a run, Lighthouse audits the error state instead of the map view.
+- Use the first few runs to establish a baseline before setting score thresholds.
+
+Static accessibility rules are also enforced via [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) in the lint step.
+
+Locally, any Chromium-based browser works (Chrome, Brave, Edge). LHCI auto-detects Chrome/Chromium; for others, set `CHROME_PATH` to the browser executable:
+
+```bash
+CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" pnpm lighthouse
+```
+
+`pnpm lighthouse` serves the built app over HTTP for a stable audit URL. Manual `start:production:pwa` may use HTTPS when `VITE_PWA_ENABLED=true` in `.env.local` (required for service worker dev testing). CI installs Google Chrome automatically.
+
 ### Linting & Code Formatting
 
 We use [ESLint](https://eslint.org/) for finding and fixing problems in our code. Check your local code by running the following command:
@@ -105,6 +139,8 @@ In addition, you may install the [Vitest](https://marketplace.visualstudio.com/i
 
 A continuous integration workflow runs on every push to the `main` branch and on pull requests. When your changes do not pass the `Lint`, `Test`, `Build`, or `Build (PWA)` steps, the workflow fails. Please make sure to correct those issues in a separate commit.
 
+The `Lighthouse` job runs the same `pnpm lighthouse` command as local development and uploads HTML reports as an artifact. It is advisory and does not block merges.
+
 ### Deployments
 
 Production deployments to GitHub Pages are triggered automatically when you push a version tag (for example, `v0.12.0`):
@@ -136,16 +172,13 @@ pnpm run generate-pwa-assets
 
 #### Installation
 
-If you're having issues with the PWA installation, you can use Lighthouse from
-the Dev Tools in order to check what's missing for it to work.
+Run a Lighthouse audit to check installability and PWA criteria:
 
-These are the steps for Chromium based browsers:
+```bash
+pnpm lighthouse
+```
 
-1. Open Dev Tools
-2. Go to Lighthouse tab
-3. Check Progressive Web App category
-4. Press Analyze page load button
-5. Review results
+Open the HTML reports in `lhci-reports/` and review the Progressive Web App category. You can also use Lighthouse from Chrome DevTools (Lighthouse tab → check Progressive Web App → Analyze page load).
 
 #### Update service worker
 

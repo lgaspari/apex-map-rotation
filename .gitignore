@@ -5,6 +5,10 @@ dist-ssr
 # pwa
 dev-dist
 
+# lighthouse
+.lighthouseci
+lhci-reports
+
 # coverage directory used by tools like istanbul
 coverage
 *.lcov

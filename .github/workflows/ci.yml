@@ -119,3 +119,43 @@ jobs:
           test -f dist/manifest.webmanifest
           grep -q '/apex-map-rotation/manifest.webmanifest' dist/index.html
           grep -q '/apex-map-rotation/favicon.ico' dist/index.html
+
+  lighthouse:
+    name: Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version-file: '.nvmrc'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
+      - name: Run Lighthouse
+        env:
+          VITE_APEX_LEGENDS_API_SECRET_TOKEN: ${{ secrets.VITE_APEX_LEGENDS_API_SECRET_TOKEN }}
+        run: pnpm lighthouse
+
+      - name: Write Lighthouse summary
+        if: always()
+        run: node scripts/lighthouse-summary.mjs >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: lhci-reports/
+          if-no-files-found: warn

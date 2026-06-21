@@ -20,6 +20,10 @@
     "lint": "tsc --noEmit && eslint ./src --fix --max-warnings 0",
     "start": "vite",
     "start:production": "vite build && vite preview",
+    "start:production:pwa": "VITE_PWA_ENABLED=true vite build && vite preview",
+    "lighthouse": "lhci autorun",
+    "lighthouse:summary": "node scripts/lighthouse-summary.mjs",
+    "lighthouse:report": "pnpm lighthouse && pnpm lighthouse:summary",
     "test": "pnpm run test:unit && pnpm run test:browser",
     "test:browser": "TZ=UTC vitest run",
     "test:browser:watch": "TZ=UTC vitest",
@@ -36,6 +40,7 @@
   },
   "devDependencies": {
     "@eslint/js": "9.39.4",
+    "@lhci/cli": "0.15.1",
     "@tailwindcss/vite": "4.3.1",
     "@testing-library/dom": "10.4.1",
     "@testing-library/react": "16.3.2",
