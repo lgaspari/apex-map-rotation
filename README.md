@@ -114,7 +114,7 @@ In addition, you may install [ESLint](https://marketplace.visualstudio.com/items
 
 ### Tests
 
-We use [Vitest](https://vitest.dev/) as the testing framework. Tests run in two suites: unit tests in Node and component tests in a headless browser (Playwright).
+We use [Vitest](https://vitest.dev/) as the testing framework. Tests run in three suites: unit tests in Node, component tests in a headless browser (Playwright), and PWA end-to-end tests (Playwright Test).
 
 Run all tests:
 
@@ -127,9 +127,12 @@ Run suites individually or in watch mode:
 ```bash
 pnpm run test:unit              # Node unit tests
 pnpm run test:browser           # Browser component tests
+pnpm run test:pwa               # PWA E2E (manifest + service worker)
 pnpm run test:unit:watch        # Unit tests in watch mode
 pnpm run test:browser:watch     # Browser tests in watch mode
 ```
+
+`pnpm run test:pwa` builds with PWA enabled, previews over HTTP on `127.0.0.1`, and checks manifest validity and service worker registration. For manual HTTPS PWA smoke testing, use `pnpm run start:production:pwa` instead.
 
 Generate a coverage report:
 
@@ -141,7 +144,7 @@ In addition, you may install the [Vitest](https://marketplace.visualstudio.com/i
 
 ### Continuous Integration
 
-A continuous integration workflow runs on every push to the `main` branch and on pull requests. When your changes do not pass the `Lint`, `Test`, `Build`, or `Build (PWA)` steps, the workflow fails. Please make sure to correct those issues in a separate commit.
+A continuous integration workflow runs on every push to the `main` branch and on pull requests. When your changes do not pass the `Lint`, `Test`, `Build`, or `Build and test (PWA)` steps, the workflow fails. Please make sure to correct those issues in a separate commit.
 
 The `Lighthouse` job runs the same `pnpm lighthouse` command as local development and uploads HTML reports as an artifact. It is advisory and does not block merges.
 

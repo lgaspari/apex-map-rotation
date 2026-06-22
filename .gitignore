@@ -16,6 +16,10 @@ coverage
 # vitest browser failure screenshots
 **/__screenshots__
 
+# playwright
+playwright-report
+test-results
+
 # dependencies
 node_modules
 
