@@ -60,7 +60,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright@1.61.0 install --with-deps
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run tests
         run: pnpm run test
@@ -121,7 +121,7 @@ jobs:
           grep -q '/apex-map-rotation/favicon.ico' dist/index.html
 
       - name: Install Playwright Browsers
-        run: pnpm exec playwright@1.61.0 install --with-deps chromium
+        run: pnpm exec playwright install --with-deps chromium
 
       - name: Run PWA E2E tests
         run: pnpm run test:pwa
