@@ -72,6 +72,8 @@ To run the production build with PWA enabled (service worker and manifest):
 pnpm run start:production:pwa
 ```
 
+This sets `VITE_PWA_ENABLED=true` for both build and preview, so behavior does not depend on `.env.local`. Preview is served over HTTPS (self-signed cert in `certs/`) for service worker testing—unlike `pnpm lighthouse`, which intentionally uses HTTP on preview for a stable audit URL.
+
 ### Quality metrics
 
 We use [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) to audit performance, accessibility, best practices, SEO, and PWA criteria. The same command runs locally and in CI:
@@ -98,7 +100,7 @@ Locally, any Chromium-based browser works (Chrome, Brave, Edge). LHCI auto-detec
 CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" pnpm lighthouse
 ```
 
-`pnpm lighthouse` serves the built app over HTTP for a stable audit URL. Manual `start:production:pwa` may use HTTPS when `VITE_PWA_ENABLED=true` in `.env.local` (required for service worker dev testing). CI installs Google Chrome automatically.
+`pnpm lighthouse` builds with PWA enabled, then previews over HTTP (`VITE_PWA_ENABLED=false`) on `127.0.0.1` for a stable audit URL. CI installs Google Chrome automatically.
 
 ### Linting & Code Formatting
 

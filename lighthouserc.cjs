@@ -1,7 +1,7 @@
 module.exports = {
   ci: {
     collect: {
-      // Build with PWA; preview over HTTP so Lighthouse URL matches (see README).
+      // Build with PWA; preview over HTTP (overrides .env) so Lighthouse URL matches.
       startServerCommand:
         'VITE_PWA_ENABLED=true vite build && VITE_PWA_ENABLED=false vite preview --port 4173 --strictPort --host 127.0.0.1',
       startServerReadyPattern: 'Local:',

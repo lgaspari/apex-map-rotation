@@ -20,7 +20,7 @@
     "lint": "tsc --noEmit && eslint ./src --fix --max-warnings 0",
     "start": "vite",
     "start:production": "vite build && vite preview",
-    "start:production:pwa": "VITE_PWA_ENABLED=true vite build && vite preview",
+    "start:production:pwa": "VITE_PWA_ENABLED=true vite build && VITE_PWA_ENABLED=true vite preview",
     "lighthouse": "lhci autorun",
     "lighthouse:summary": "node scripts/lighthouse-summary.mjs",
     "lighthouse:report": "pnpm lighthouse && pnpm lighthouse:summary",
