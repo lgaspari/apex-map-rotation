@@ -74,6 +74,26 @@ pnpm run start:production:pwa
 
 This sets `VITE_PWA_ENABLED=true` for both build and preview, so behavior does not depend on `.env.local`. Preview is served over HTTPS (self-signed cert in `certs/`) for service worker testing—unlike `pnpm lighthouse`, which intentionally uses HTTP on preview for a stable audit URL.
 
+### Regenerate local HTTPS certificate
+
+The `certs/` directory holds a development certificate generated with [mkcert](https://github.com/FiloSottile/mkcert). It is used when PWA is enabled (`pnpm run start` with `VITE_PWA_ENABLED=true` in `.env.local`, or `pnpm run start:production:pwa`). Certificates expire after a few years and must be regenerated on your machine.
+
+Install [mkcert](https://github.com/FiloSottile/mkcert) and trust the local CA once:
+
+```bash
+brew install mkcert
+mkcert -install
+```
+
+Then regenerate `cert.pem` and `key.pem`:
+
+```bash
+cd certs
+mkcert -cert-file cert.pem -key-file key.pem localhost 127.0.0.1 ::1 $(ipconfig getifaddr en0)
+```
+
+Include your current LAN IP when testing on another device over the network (replace `en0` with the correct interface if needed). Restart the dev or preview server after regenerating.
+
 ### Quality metrics
 
 We use [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) for performance, accessibility, best practices, and SEO audits.
