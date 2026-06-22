@@ -8,6 +8,7 @@ dev-dist
 # lighthouse
 .lighthouseci
 lhci-reports
+lhci-reports-production
 
 # coverage directory used by tools like istanbul
 coverage

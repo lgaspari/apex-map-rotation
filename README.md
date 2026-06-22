@@ -76,20 +76,40 @@ This sets `VITE_PWA_ENABLED=true` for both build and preview, so behavior does n
 
 ### Quality metrics
 
-We use [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) to audit performance, accessibility, best practices, SEO, and PWA criteria. The same command runs locally and in CI:
+We use [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) for performance, accessibility, best practices, and SEO audits.
+
+**Local preview** (same as PR CI — config: [`lighthouserc.dev.cjs`](lighthouserc.dev.cjs)):
 
 ```bash
 pnpm lighthouse
+# or audit + terminal summary:
+pnpm lighthouse:report
 ```
 
-Reports are written to `lhci-reports/`. Open the HTML files in that folder to review scores and recommendations.
+Reports are written to `lhci-reports/`.
 
-This check is **advisory** in CI—it does not block merges. Scores from the median run appear in the GitHub Actions job summary for the `Lighthouse` job. Download the `lighthouse-reports` artifact for full HTML reports.
+**Production** (live GitHub Pages URL — config: [`lighthouserc.production.cjs`](lighthouserc.production.cjs)):
+
+```bash
+pnpm lighthouse:production
+# or audit + terminal summary:
+pnpm lighthouse:report:production
+```
+
+Reports are written to `lhci-reports-production/`. Requires network access.
+
+Both checks are **advisory** in CI—they do not block merges. Scores appear in the GitHub Actions job summary; download workflow artifacts for full HTML reports.
+
+| Workflow | Trigger | Job | Artifact |
+|----------|---------|-----|----------|
+| CI | PR / push to `main` | `Lighthouse` | `lighthouse-reports` |
+| Lighthouse (production) | After successful CD deploy; manual | `Lighthouse (production)` | `lighthouse-production-reports` |
 
 Notes:
 
 - Lab scores differ from real-user Web Vitals on GitHub Pages.
-- If the Apex Legends API is unavailable during a run, Lighthouse audits the error state instead of the map view.
+- If the Apex Legends API is unavailable during a preview run, Lighthouse audits the error state instead of the map view.
+- Lighthouse 12 no longer scores PWA; use `pnpm test:pwa` for runtime PWA checks.
 - Use the first few runs to establish a baseline before setting score thresholds.
 
 Static accessibility rules are also enforced via [`eslint-plugin-jsx-a11y`](https://github.com/jsx-eslint/eslint-plugin-jsx-a11y) in the lint step.
@@ -98,6 +118,7 @@ Locally, any Chromium-based browser works (Chrome, Brave, Edge). LHCI auto-detec
 
 ```bash
 CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" pnpm lighthouse
+CHROME_PATH="/Applications/Brave Browser.app/Contents/MacOS/Brave Browser" pnpm lighthouse:production
 ```
 
 `pnpm lighthouse` builds with PWA enabled, then previews over HTTP (`VITE_PWA_ENABLED=false`) on `127.0.0.1` for a stable audit URL. CI installs Google Chrome automatically.
@@ -146,7 +167,9 @@ In addition, you may install the [Vitest](https://marketplace.visualstudio.com/i
 
 A continuous integration workflow runs on every push to the `main` branch and on pull requests. When your changes do not pass the `Lint`, `Test`, `Build`, or `Build and test (PWA)` steps, the workflow fails. Please make sure to correct those issues in a separate commit.
 
-The `Lighthouse` job runs the same `pnpm lighthouse` command as local development and uploads HTML reports as an artifact. It is advisory and does not block merges.
+The `Lighthouse` job runs `pnpm lighthouse` (local preview audit). It is advisory and does not block merges.
+
+The [Lighthouse (production) workflow](.github/workflows/lighthouse-production.yml) runs after a successful [CD](.github/workflows/cd.yml) deploy and audits the live GitHub Pages URL. It is also advisory. Re-run manually from Actions → Lighthouse (production) → Run workflow.
 
 ### Deployments
 
@@ -179,13 +202,14 @@ pnpm run generate-pwa-assets
 
 #### Installation
 
-Run a Lighthouse audit to check installability and PWA criteria:
+Run PWA E2E checks and inspect the production build locally:
 
 ```bash
-pnpm lighthouse
+pnpm test:pwa
+pnpm start:production:pwa
 ```
 
-Open the HTML reports in `lhci-reports/` and review the Progressive Web App category. You can also use Lighthouse from Chrome DevTools (Lighthouse tab → check Progressive Web App → Analyze page load).
+Use Chrome DevTools → Application (Manifest, Service Workers) to debug installability. Lighthouse 12 no longer includes a PWA score category.
 
 #### Update service worker
 

@@ -1,6 +1,11 @@
 import fs from 'fs';
 
-const manifestPath = 'lhci-reports/manifest.json';
+const reportsDir = process.env.LHCI_REPORTS_DIR ?? 'lhci-reports';
+const manifestPath = `${reportsDir}/manifest.json`;
+const artifactName =
+  reportsDir === 'lhci-reports-production'
+    ? 'lighthouse-production-reports'
+    : 'lighthouse-reports';
 
 if (!fs.existsSync(manifestPath)) {
   console.log('No Lighthouse reports found.');
@@ -41,7 +46,7 @@ for (const [label, key] of categories) {
 
 lines.push(
   '',
-  'Download the `lighthouse-reports` artifact for full HTML reports.'
+  `Download the \`${artifactName}\` artifact for full HTML reports.`
 );
 
 console.log(lines.join('\n'));
