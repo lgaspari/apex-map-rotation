@@ -1,7 +1,9 @@
+const { homepage } = require('./package.json');
+
 module.exports = {
   ci: {
     collect: {
-      url: ['https://lgaspari.github.io/apex-map-rotation/'],
+      url: [process.env.PRODUCTION_URL || homepage],
       numberOfRuns: 3,
       settings: {
         chromeFlags: [
