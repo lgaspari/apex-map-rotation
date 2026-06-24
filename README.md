@@ -123,7 +123,7 @@ Both checks are **advisory** in CI—they do not block merges. Scores appear in 
 | Workflow | Trigger | Job | Artifact |
 |----------|---------|-----|----------|
 | CI | PR / push to `main` | `Lighthouse` | `lighthouse-reports` |
-| Lighthouse (production) | After successful CD deploy; manual | `Lighthouse (production)` | `lighthouse-production-reports` |
+| Lighthouse (production) | After GitHub Pages deploy to `gh-pages`; manual | `Lighthouse (production)` | `lighthouse-production-reports` |
 
 Notes:
 
@@ -189,7 +189,7 @@ A continuous integration workflow runs on every push to the `main` branch and on
 
 The `Lighthouse` job runs `pnpm lighthouse` (local preview audit). It is advisory and does not block merges.
 
-The [Lighthouse (production) workflow](.github/workflows/lighthouse-production.yml) runs after a successful [CD](.github/workflows/cd.yml) deploy and audits the live GitHub Pages URL. It is also advisory. Re-run manually from Actions → Lighthouse (production) → Run workflow.
+The [Lighthouse (production) workflow](.github/workflows/lighthouse-production.yml) runs after GitHub's `pages-build-deployment` workflow completes on `gh-pages` (following a [CD](.github/workflows/cd.yml) tag deploy) and audits the live GitHub Pages URL. It is also advisory. Re-run manually from Actions → Lighthouse (production) → Run workflow.
 
 ### Deployments
 

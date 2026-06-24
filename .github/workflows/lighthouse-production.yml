@@ -2,12 +2,13 @@ name: 'Lighthouse (production)'
 
 on:
   workflow_run:
-    workflows: ['CD']
+    workflows: [pages-build-deployment]
     types: [completed]
+    branches: [gh-pages]
   workflow_dispatch:
 
 concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.workflow_run.head_sha || github.ref }}'
+  group: '${{ github.workflow }} @ ${{ github.event.workflow_run.head_commit.message || github.ref }}'
   cancel-in-progress: true
 
 jobs:
@@ -15,7 +16,10 @@ jobs:
     name: Lighthouse (production)
     if: >
       github.event_name == 'workflow_dispatch' ||
-      github.event.workflow_run.conclusion == 'success'
+      (
+        github.event.workflow_run.conclusion == 'success' &&
+        startsWith(github.event.workflow_run.head_commit.message, 'v')
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 15
     continue-on-error: true
@@ -23,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || github.event.workflow_run.head_sha }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && github.ref || format('refs/tags/{0}', github.event.workflow_run.head_commit.message) }}
 
       - name: Set production URL
         run: echo "PRODUCTION_URL=$(jq -r .homepage package.json)" >> "$GITHUB_ENV"
@@ -42,14 +46,6 @@ jobs:
 
       - name: Setup Chrome
         uses: browser-actions/setup-chrome@v2
-
-      - name: Wait for GitHub Pages
-        run: |
-          for i in $(seq 1 30); do
-            curl -sf "$PRODUCTION_URL" && exit 0
-            sleep 10
-          done
-          exit 1
 
       - name: Run Lighthouse against production
         run: pnpm lighthouse:production
