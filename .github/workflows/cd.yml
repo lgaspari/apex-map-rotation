@@ -37,6 +37,7 @@ jobs:
       - name: Build application
         env:
           VITE_APEX_LEGENDS_API_SECRET_TOKEN: ${{ secrets.VITE_APEX_LEGENDS_API_SECRET_TOKEN }}
+          VITE_APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
           VITE_PWA_ENABLED: ${{ vars.VITE_PWA_ENABLED }}
         run: pnpm run build
 
