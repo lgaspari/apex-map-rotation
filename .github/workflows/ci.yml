@@ -148,7 +148,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Setup Chrome
-        uses: browser-actions/setup-chrome@v1
+        uses: browser-actions/setup-chrome@v2
 
       - name: Run Lighthouse
         env:
@@ -160,7 +160,7 @@ jobs:
         run: node scripts/lighthouse-summary.mjs >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload Lighthouse reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lighthouse-reports
           path: lhci-reports/
